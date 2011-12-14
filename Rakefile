@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "generete_from_template"
   gem.homepage = "http://github.com/mathfur/generete_from_template"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{erbで作ったテンプレートを展開してプロジェクトに必要なファイルを一度に作成します}
+  gem.description = %Q{-}
   gem.email = "mathfuru@gmail.com"
   gem.authors = ["mathfuru"]
   # dependencies defined in Gemfile
