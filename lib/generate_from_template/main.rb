@@ -8,12 +8,14 @@ parser = GetoptLong.new
 parser.set_options(
   ['--output-dir', '-o', GetoptLong::REQUIRED_ARGUMENT],
   ['--template', '-t', GetoptLong::REQUIRED_ARGUMENT],
+  ['--csv-fname', '-c', GetoptLong::REQUIRED_ARGUMENT],
   ['--verbose', GetoptLong::NO_ARGUMENT],
   ['--skip_confirm', GetoptLong::NO_ARGUMENT]
 )
 
 output_dir = nil
 template_fname = nil
+csv_fname = nil
 verbose = nil
 skip_confirm = nil
 
@@ -22,6 +24,9 @@ parser.each_option do |name, arg|
   when '--output-dir', '-o'
     output_dir = arg
     puts "output_dir: #{output_dir}"
+  when '--csv-fname', '-c'
+    csv_fname = arg
+    puts "csv_fname: #{csv_fname}"
   when '--template', '-t'
     template_fname = arg
     puts "template_fname: #{template_fname}"
@@ -34,6 +39,7 @@ end
 
 puts "出力ファイルの指定が必要です" unless output_dir
 puts "テンプレートファイルの指定が必要です" unless template_fname
+puts "CSVファイルの指定が必要です" unless csv_fname
 
 mark_reg = /INSERT_MARK(\(([^\)]*)\))/
 
@@ -43,7 +49,7 @@ def confirm(path)
   (res == 'y')
 end
 
-Template.new(template_fname).each_at(output_dir) do |path, act_string, target_str, templ|
+Template.new(template_fname, csv_fname).each_at(output_dir) do |path, act_string, target_str, templ|
   print "."
   result = nil
   case act_string

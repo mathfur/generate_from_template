@@ -4,7 +4,7 @@ require "erb"
 require "fileutils"
 
 class Template
-  def initialize(fname)
+  def initialize(fname, csv_fname)
     @templates = ERB.new(File.read(fname), nil, '-').result(binding).scan(/--\[([^\:]*):([^\]:]*)\]-{10,}\n(.*?)\n--\n/m)
   end
 
