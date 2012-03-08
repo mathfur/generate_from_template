@@ -10,7 +10,8 @@ parser.set_options(
   ['--template', '-t', GetoptLong::REQUIRED_ARGUMENT],
   ['--csv-fname', '-c', GetoptLong::REQUIRED_ARGUMENT],
   ['--verbose', GetoptLong::NO_ARGUMENT],
-  ['--skip_confirm', GetoptLong::NO_ARGUMENT]
+  ['--only-erb', GetoptLong::NO_ARGUMENT],
+  ['--skip-confirm', GetoptLong::NO_ARGUMENT]
 )
 
 output_dir = nil
@@ -18,6 +19,7 @@ template_fname = nil
 csv_fname = nil
 verbose = nil
 skip_confirm = nil
+only_erb = nil
 
 parser.each_option do |name, arg|
   case name
@@ -32,19 +34,27 @@ parser.each_option do |name, arg|
     puts "template_fname: #{template_fname}"
   when '--verbose'
     verbose = true
+  when '--only-erb'
+    only_erb = true
   when '--skip-confirm'
     skip_confirm = true
   end
 end
 
-puts "出力ファイルの指定が必要です" unless output_dir
 puts "テンプレートファイルの指定が必要です" unless template_fname
 puts "CSVファイルの指定が必要です" unless csv_fname
+
+if only_erb
+  puts Template.new(template_fname, csv_fname).erb_result
+  exit
+end
+
+puts "出力ファイルの指定が必要です" unless output_dir
 
 mark_reg = /INSERT_MARK(\(([^\)]*)\))/
 
 def confirm(path)
-  puts "#{path}に書き込みます。よろしいですか?(y/n)"
+  print "#{path}\t\tに書き込みます。よろしいですか?(y/n): "
   res = gets.strip
   (res == 'y')
 end

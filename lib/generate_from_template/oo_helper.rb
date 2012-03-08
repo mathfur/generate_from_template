@@ -1,5 +1,6 @@
 require "rubygems"
 require "csv2hash"
+require "active_support"
 
 module OOHelper
   class Models
