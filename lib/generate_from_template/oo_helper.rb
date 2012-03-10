@@ -9,10 +9,13 @@ module OOHelper
     end
 
     def models(&block)
-      @hash.each do |model, model_info|
-        m = Model.new(model, model_info)
-        block.call(m)
+      models_ = @hash.map do |model, model_info|
+        Model.new(model, model_info)
       end
+
+      return models_ unless block_given?
+
+      models_.each{|m| block.call(m) }
     end
   end
 
