@@ -84,14 +84,6 @@ module OOHelper
   end
 end
 
-# TODO: 後で消す
-class String
-  STDERR.puts "不要なコードが残っています"
-  def camelize; self; end
-  def underscore; self; end
-  def pluralize; self; end
-end
-
 if $0 == __FILE__
   OOHelper::Models.new("test/sample.csv").models do |m|
     puts "#{m.table_name}"
