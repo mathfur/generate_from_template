@@ -1,6 +1,7 @@
 require "rubygems"
 require "csv2hash"
-require "active_support"
+require "active_support/inflector"
+require "active_support/core_ext/hash"
 
 module OOHelper
   class Models
