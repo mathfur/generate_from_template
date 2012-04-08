@@ -32,9 +32,6 @@ module OOHelper
         p model if name_ == "name"
         self.class.class_eval do
           define_method name_ do |*args|
-            p ">>>>>"
-            p @model_info["attrs"].keys
-            p "<<<<"
             (@model_info["attrs"] || {})[name_]["etc"]
           end
         end
