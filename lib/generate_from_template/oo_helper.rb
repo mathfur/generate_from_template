@@ -95,11 +95,10 @@ module OOHelper
     alias :model :model_name
     alias :table :table_name
 
-
     def attrs(&block)
       if block_given?
-        (@model_info["attrs"] ||{}).each do |attr, attr_info|
-          attr = Attr.new(attr, attr_info["etc"])
+        (@model_info["attrs"] ||{}).each do |name, attr_info|
+          attr = Attr.new(name, attr_info)
           block.call(attr)
         end
       else
@@ -125,18 +124,39 @@ module OOHelper
 
     def initialize(attr, attr_info)
       @attr = attr
-      @attr_info = attr_info # => {"type" => *,  "field" => * .. }
+      @etc_only_attr_info = attr_info["etc"] # => {"type" => *,  "field" => * .. }
+      @all_attr_info = attr_info
 
-      @attr_info.keys.each do |name|
+      # 下位互換のため
+      @attr_info = attr_info
+
+      @etc_only_attr_info.keys.each do |name|
         self.class.class_eval do
           define_method name do |*args|
             if 2 <= args.length
               # a.default "null" ":default => $v"のように書くと、
-              # defaultの値が"null"の時は空文字列、その他の場合は":default => #{@attr_info[name]}"を返す
+              # defaultの値が"null"の時は空文字列、その他の場合は":default => #{@etc_only_attr_info[name]}"を返す
               value_is_null, value_is_not_null = args
-              @attr_info[name] == value_is_null ? "" : value_is_not_null.gsub('$v', @attr_info[name]).gsub(/\bTRUE\b/, "true").gsub(/\bFALSE\b/, "false")
+              @etc_only_attr_info[name] == value_is_null ? "" : value_is_not_null.gsub('$v', @etc_only_attr_info[name]).gsub(/\bTRUE\b/, "true").gsub(/\bFALSE\b/, "false")
             else
-              @attr_info[name]
+              @etc_only_attr_info[name]
+            end
+          end
+        end
+      end
+
+      @all_attr_info.keys.each do |func_name| # e.g. func_name = "css"
+        self.class.class_eval do
+          define_method func_name do |*args|
+            tbl_name = args[0] # TODO: extract_optionsに変換する
+            options = args[1] || {}
+
+            child_name_cell_val_hash = (@all_attr_info[func_name] || {}).select{|k, v| v.present? || options[:blank]}
+
+            if block_given?
+              child_name_cell_val_hash.each{|k,v| yield k,v }
+            else
+              Hash[*child_name_cell_val_hash.flatten]
             end
           end
         end
