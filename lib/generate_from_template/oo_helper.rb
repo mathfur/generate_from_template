@@ -47,23 +47,6 @@ module OOHelper
       end
     end
 
-    # m.table_columns("index"){|c| .. }でindexのカラム全体を渡る
-    # options:
-    #   :blank => true <=> セルの値がブランクのものも出力する
-    def table_columns(tbl_name, options ={})
-      # {カラム名 => セルの値}ハッシュを作る
-      column_cell_hash = (@model_info["attrs"] ||{}).merge((@model_info["columns"] ||{})).map{|attr, hash| [attr, hash["tables"][tbl_name]]}.
-        select{|k, v| v.present? || options[:blank]}
-
-      if block_given?
-        column_cell_hash.each do |attr, cell_val|
-          yield attr, cell_val
-        end
-      else
-        Hash[*column_cell_hash.flatten]
-      end
-    end
-
     def camelize; @model.camelize; end
     def table_name; @model.pluralize.underscore; end
     def pluralize; @model.pluralize; end
