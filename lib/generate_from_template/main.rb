@@ -59,7 +59,7 @@ def confirm(path)
   (res == 'y')
 end
 
-Template.new(template_fname, csv_fname).each_at(output_dir) do |path, act_string, target_str, templ|
+Template.new(template_fname, csv_fname, :verbose => verbose).each_at(output_dir) do |path, act_string, target_str, templ|
   print "."
   result = nil
   case act_string
