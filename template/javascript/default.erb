@@ -1,0 +1,24 @@
+<% require "rubygems" %>
+<% require "csv2hash" %>
+--[src/from_template.js:c]-------------------------------------------
+<% CSV2Hash.new(csv_fname).to_hash.each do |model, model_info| %>
+        <%- methods_ = (model_info['methods'] || []).reject{|n, _| n == 'initialize'} -%>
+  <%- attrs = model_info['attrs'] -%>
+  <%- initialize = (model_info['methods'] || {})['initialize'] -%>
+  <%- if initialize -%>
+    <%- init_args = initialize['arg'].values.reject{|e| e == '-'} -%>
+var <%= model %> = function(<%= init_args.join(', ') %>){
+    <%- attrs.each do |attr_name, attr_info| -%>
+      <%- if attr_info['general']['yurai'] == 'initialize_attr' -%>
+  this.<%= attr_name %> = <%= attr_name %>;
+      <%- end -%>
+    <%- end -%>
+    <%- methods_.each do |method_name, method_info| -%>
+  this.<%= method_name %> = function(){
+    <%= method_info['general']['body'] %>
+  }
+  <%- end -%>
+}
+  <%- end -%>
+<%- end -%>
+--

@@ -1,0 +1,18 @@
+<% conf = OOHelper::Config %>
+
+--[src/jquery.foo.coffee:c]-------------------
+#
+# <%= conf.application_name %>
+# Requires jQuery 1.4.2
+#
+# Dual licensed under the MIT or GPL Version 2 licenses.
+#
+(($) ->
+  $.extend({
+    foo: (x) ->
+      alert(x)
+  })
+)($)
+--
+
+

@@ -1,0 +1,74 @@
+<% require "nkf" %>
+
+<!-- Migration files -->
+<% migration_file_suffix ||=0 %>
+<%- OOHelper::Models.new(csv_fname).models do |m| -%>
+<% migration_file_suffix+=1 %>
+--[db/migrate/<%= (Time.now + migration_file_suffix).strftime('%Y%m%d%H%M%S') %>_create_<%= m.table_name %>.rb:c]-------------------------------------------
+class Create<%= m.camelize %> < ActiveRecord::Migration
+  def change
+    create_table :<%= m.table_name %> do |t|
+      <%- m.attrs do |a| -%>
+      t.column :<%= a.name %>, :<%= a.type %><%= a.allow_null "TRUE", ", :null => false" %><%= a.default "null",", :default => $v" %>
+      <%- end -%>
+
+      t.timestamp
+    end
+
+    <%- m.attrs do |a| -%>
+    <%= a.index "", "add_index :#{m.table_name}, :#{a.name}" %>
+    <%- end -%>
+  end
+end
+--
+<%- end -%>
+
+<!-- Model -->
+<%- OOHelper::Models.new(csv_fname).models do |m| -%>
+--[app/models/<%= m.singularize %>.rb:c]-------------------------------------------
+# -*- encoding: utf-8 -*-
+class <%= m.model_name %> < ActiveRecord::Base
+  <%- OOHelper::Models.new(csv_fname).models do |m2| -%>
+  <%= m.belongs_to?(m2) ? "belongs_to :#{m2.single}" : "#" %>
+  <%= m.has_many?(m2) ? "has_many :#{m2.table_name}" : "#" %>
+  <%- end -%>
+end
+--
+
+<%- end -%>
+
+--[config/locales/model_ja.yml:c]----------------------------
+ja:
+  activerecord:
+    models:
+      <%- OOHelper::Models.new(csv_fname).models do |m| -%>
+      <%= m.instance %>: <%= NKF.nkf("-w",m.ja_name || "") %>
+      <%- end -%>
+    attributes:
+      <%- OOHelper::Models.new(csv_fname).models do |m| -%>
+      <%= m.instance %>:
+        <%- m.attrs do |a| -%>
+        <%= a.name %>: <%= NKF.nkf("-w",a.ja_name || "") %>
+        <%- end -%>
+      <%- end -%>
+--
+
+--[template/view.csv:c]-------------------------------------
+,,,etc,etc,etc,etc,etc,css,css,
+,,,cattr_val,header,cell_val,klass,tooltip,text-align,width,
+<%- OOHelper::Models.new(csv_fname).models do |m| -%>
+<%= m.single %>-index,cattrs,controller,<%= m.multiple %>_controller
+<%= m.single %>-index,cattrs,view,index
+<%= m.single %>-index,cattrs,location,main
+<%= m.single %>-index,cattrs,template,index
+<%= m.single %>-index,cattrs,input,<%= m.single %>
+<%= m.single %>-index,cattrs,transform,<%= m.single %>
+<%= m.single %>-index,cattrs,ja_name,<%= m.single %>
+<%= m.single %>-index,cattrs,in_global_menu,<%= m.single %>
+<%= m.single %>-index,cattrs,header,<%= m.single %>
+<%- m.attrs do |a| -%>
+<%= m.single %>-index,attrs,<%= a.name %>,,,<%= a.name %>
+<%- end -%>
+<%- end -%>
+--
+

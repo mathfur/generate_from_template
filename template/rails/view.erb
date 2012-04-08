@@ -1,0 +1,262 @@
+<% require "nkf" %>
+
+<!-- View -->
+--[app/views/layouts/application.html.haml:c]-------------------------------------------
+!!!
+%html
+  %head
+    %title= @title
+    %meta{:'http-equiv' => "Content-Type", :content => "text/html;charset=utf-8"}
+    = stylesheet_link_tag "application"
+    = javascript_include_tag "application"
+    = csrf_meta_tags
+    %link{:href => "stylesheet/application.css", :rel => "stylesheet", :type => "text/css"}
+  %body
+    %div#container
+      %div#header= render 'shared/header'
+      %div#main= yield :main
+      %div#submenu= yield :submenu
+      %div#footer= render 'shared/footer'
+--
+
+--[app/views/shared/_header.html.haml:c]---------------------------
+%ul#global_menu
+  ■GLOBAL_MENU■
+--
+
+--[app/views/shared/_footer.html.haml:c]---------------------------
+■FOOTER■
+--
+
+<%- OOHelper::Models.new(csv_fname).models.map{|t| t.views.split(',').map{|v| [t.controller, v]} }.inject([]){|s, e| s + e}.sort.uniq.each do |controller_name, view_name| -%>
+--[app/views/<%= controller_name %>/<%= view_name %>.html.haml:c]-------------------------------------------
+<%- OOHelper::Models.new(csv_fname).models do |t| -%>
+<%- if controller_name == t.controller && t.views.split(',').include?(view_name) && t.location != '' -%>
+- content_for :<%= t.location %> do
+  = render :partial => "<%= t.controller %>/<%= t.template %>.html", :locals => {:<%= t.input %> => @<%= t.input %>}
+<%- end -%>
+<%- end -%>
+--
+<%- end -%>
+
+<%- OOHelper::Models.new(csv_fname).models do |t| -%>
+<%- case t.template -%>
+<%- when "index" -%>
+
+--[app/views/<%= t.controller %>/_index.html.haml:c]-------------------------------------------
+%table.<%= t.single %>
+  %tr
+    <%- t.attrs do |a| -%>
+    %th.<%= a.name %>= <%= t.controller.singularize.camelize %>.human_attribute_name("<%= a.name %>")
+    <%- end -%>
+  - <%= t.transform %>.each do |<%= t.controller.singularize %>|
+    %tr
+      <%- t.attrs do |a| -%>
+      %td.<%= a.name %>{:title => <%= a.tooltip == '' ? '""' : a.tooltip %>}= <%= a.cell_val.present? ? a.cell_val : "''" %>
+      <%- end -%>
+--
+
+<%- when "edit" -%>
+--[app/views/<%= t.controller %>/_edit.html.haml:c]-------------------------------------------
+= form_for(<%= t.input %>) do |form|
+  %table.<%= t.single %>
+    <%- t.attrs do |a| -%>
+    %tr
+      <%- if a.header != '' -%>
+      %th.<%= a.name %>.key= <%= a.header == '{default}' ? "t('label.#{a.name}')" : a.header %>
+      <%- end -%>
+      %td.<%= a.name %>.val= <%= a.cell_val.present? ? a.cell_val : "''" %>
+    <%- end -%>
+--
+
+<%- when "menu" -%>
+--[app/views/<%= t.controller %>/_menu.html.haml:c]-------------------------------------------
+
+%table.<%= t.single %>
+  <%- t.attrs do |a| -%>
+  %tr
+    <%- if a.header != '' -%>
+    %th.<%= a.name %>.key <%= a.header %>
+    <%- end -%>
+    %td.<%= a.name %>.val= <%= a.cell_val.present? ? a.cell_val : "''" %>
+  <%- end -%>
+--
+<%- end # case end -%>
+<%- end -%>
+
+<!-- assets -->
+--[app/assets/stylesheets/application.css.scss:c]-------------------------------------------
+/*
+ *= require_self
+ *= require_tree .
+*/
+
+/* box-sizing */
+* { -moz-box-sizing: padding-box }
+
+/* display */
+ul#global_menu { display: -moz-box; }
+
+/* float */
+div#main { float: right; }
+div#submenu { float: left; }
+div#footer { clear: left; }
+
+/* width */
+div#container { width: 980px; }
+ul#global_menu li { width: 175px; }
+div#header { width: 100% }
+div#footer { width: 100% }
+#main { width: 648px; }
+#main table { width: 100% }
+#submenu { width: 238px; }
+#submenu table { width: 100% }
+
+/* height */
+html { height: 100%; }
+body { height: 100%; }
+ul#global_menu { height: 38px }
+ul#global_menu li { height: 35px; }
+
+/* margin */
+body { margin: 0px; }
+#container { margin-left: auto }
+#container { margin-right: auto }
+ul#global_menu { margin: 0px }
+ul#global_menu li { margin: 0px }
+#main { margin: 23px }
+#submenu { margin: 23px }
+
+/* padding */
+body { padding: 0px; }
+ul#global_menu { padding: 0px; }
+ul#global_menu li { padding: 5px; }
+
+/* list-style */
+ul#global_menu li { list-style-type: none; }
+
+/* border */
+ul#global_menu { border: 0px; }
+ul#global_menu li { border-right: 1px solid rgba(255, 255, 255, 0.3) }
+ul#global_menu li { border-left: 1px solid rgba(150, 150, 150, 0.3) }
+ul#global_menu li { border-top: 1px solid rgba(200, 200, 200, 0.3) }
+ul#global_menu li { border-bottom: 2px solid rgba(60, 60, 60, 0.3) }
+
+/* border-radius */
+ul#global_menu { -moz-border-radius: 5px }
+ul#global_menu li { -moz-border-radius: 3px }
+ul#global_menu li:first-child { -moz-border-radius-topleft: 5px }
+ul#global_menu li:first-child { -moz-border-radius-bottomleft: 5px }
+ul#global_menu li:last-child { -moz-border-radius-topright: 5px }
+ul#global_menu li:last-child { -moz-border-radius-bottomright: 5px }
+
+/* background */
+#container { background-color: #ffffff }
+a:hover { background-color: rgba(0,0,0,0) }
+body { background-color: #eeeeee }
+ul#global_menu { background-image: -moz-linear-gradient(#FAFAFA, #DDDDDD) }
+
+/* text-color */
+a:hover { color: #333333 }
+
+/* text-decoration */
+a { text-decoration: none }
+a:hover { text-decoration: none }
+
+/* text-align */
+ul#global_menu li { text-align: center }
+
+/* font-family */
+body { font-family: "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "メイリオ", Meiryo, Osaka, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif; }
+
+/* font-size */
+body { font-size: 13px; }
+
+/* tooltip */
+#tooltip {
+    position:   absolute;
+    width:      12em;
+    background: #999;
+    padding:    10px;
+}
+#tooltip h3, #tooltip div {
+    font-size:   1em;
+    font-weight: normal;
+    margin:      0;
+}
+
+/* 各テーブルに対応するCSS */
+<%- OOHelper::Models.new(csv_fname).models do |t| -%>
+table.<%= t.single %> { background-color: #ffffff }
+//table.<%= t.single %> { box-shadow: 2px 2px 2px rgba(30, 30, 30, 0.8); }
+table.<%= t.single %> th { background: #0030ac }
+table.<%= t.single %> { border-collapse: collapse; }
+table.<%= t.single %> { border: 1px solid #4b4b4b }
+table.<%= t.single %> th { border: 1px solid #888888 }
+table.<%= t.single %> td { border: 1px solid #888888 }
+table.<%= t.single %> th { text-style: bold }
+table.<%= t.single %> th { color: #ffffff }
+<%- case t.template -%>
+<%- when "index" -%>
+
+<%- when "edit" -%>
+
+<%- end # case end -%>
+<%- end -%>
+
+--
+
+--[app/assets/javascripts/application.js:c]-------------------------------------------
+// This is a manifest file that'll be compiled into including all the files listed below.
+// Add new JavaScript/Coffee code in separate files in this directory and they'll automatically
+// be included in the compiled file accessible from http://example.com/assets/application.js
+// It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
+// the compiled file.
+//
+//= require jquery
+//= require jquery_ujs
+//= require_tree .
+
+
+/* 各テーブルに対応するjs */
+<%- OOHelper::Models.new(csv_fname).models do |t| -%>
+<%- case t.template -%>
+<%- when "index" -%>
+
+// -- Tooltip --
+<%- t.attrs do |a| -%>
+<%- if a.tooltip != '' -%>
+$('td.<%= a.name %>').Tooltip();
+<%- end -%>
+<%- end -%>
+
+<%- when "edit" -%>
+
+<%- end # case end -%>
+<%- end -%>
+
+--
+
+<%- OOHelper::Models.new(csv_fname).models do |t| -%>
+--[app/assets/stylesheets/<%= t.single %>.css.scss:c]-------------------------------------------
+<%- t.attrs do |a| -%>
+<%- a.css.each do |k, v| -%>
+table.<%= t.single %> .<%= a.name %>{ <%= k %>: <%= v %> }
+
+<%- end -%>
+<%- end -%>
+--
+<%- end -%>
+
+--[config/locales/translation_view_ja.yml:c]----------------------------
+ja:
+  label:
+    listing: "%{target}一覧"
+    show: 表示
+    edit: 編集
+    destroy: 削除
+    new_target: "%{target}を作成する"
+
+  attention:
+    are_you_sure_you_want_to_delete_this_entry: 削除します。よろしいですか?
+--
