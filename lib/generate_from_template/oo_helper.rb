@@ -5,18 +5,29 @@ require "active_support/core_ext/hash"
 
 module OOHelper
   class Models
+    attr_accessor :normal_models, :special_models
+
     def initialize(csv_fname)
       @hash = CSV2Hash.new(csv_fname).to_hash
+      set_normal_models
     end
 
     def models(&block)
-      models_ = @hash.map do |model, model_info|
+      _models = normal_models.map do |model, model_info|
         Model.new(model, model_info)
       end
+      return _models unless block_given?
+      _models.each{|m| block.call(m) }
+    end
 
-      return models_ unless block_given?
+    def set_normal_models
+      # __で始まるモデル名は、グローバルな設定値(例えばapplication_nameなど)を
+      # 設定するためのテーブルとして使うため、ここでは除外する
+      @normal_models = @hash.reject{|m, _| m =~ /^__/ }
+    end
 
-      models_.each{|m| block.call(m) }
+    def set_special_models
+      @special_models = @hash.select{|m, _| m =~ /^__/ }.map{|m, info| [ m[/^__(.*)$/, 1], info]}
     end
   end
 
