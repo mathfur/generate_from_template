@@ -131,7 +131,7 @@ module OOHelper
               # a.default "null" ":default => $v"のように書くと、
               # defaultの値が"null"の時は空文字列、その他の場合は":default => #{@etc_only_attr_info[name]}"を返す
               value_is_null, value_is_not_null = args
-              @etc_only_attr_info[name] == value_is_null ? "" : value_is_not_null.gsub('$v', @etc_only_attr_info[name]).gsub(/\bTRUE\b/, "true").gsub(/\bFALSE\b/, "false")
+              @etc_only_attr_info[name] == value_is_null ? "" : value_is_not_null.gsub('$v', @etc_only_attr_info[name].to_s).gsub(/\bTRUE\b/, "true").gsub(/\bFALSE\b/, "false")
             else
               @etc_only_attr_info[name]
             end
