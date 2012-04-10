@@ -28,6 +28,13 @@
 ■FOOTER■
 --
 
+--[config/routes.rb:c]--------------------------------------------
+アプリケーション名::Application.routes.draw do
+<%- OOHelper::Models.new(csv_fname).models do |t| -%>
+  resources :<%= t.controller %>
+<%- end -%>
+--
+
 <%- OOHelper::Models.new(csv_fname).models.map{|t| t.views.split(',').map{|v| [t.controller, v]} }.inject([]){|s, e| s + e}.sort.uniq.each do |controller_name, view_name| -%>
 --[app/views/<%= controller_name %>/<%= view_name %>.html.haml:c]-------------------------------------------
 <%- OOHelper::Models.new(csv_fname).models do |t| -%>
@@ -38,6 +45,7 @@
 <%- end -%>
 --
 <%- end -%>
+
 
 <%- OOHelper::Models.new(csv_fname).models do |t| -%>
 <%- case t.template -%>
