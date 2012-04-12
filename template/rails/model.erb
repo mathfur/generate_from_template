@@ -59,7 +59,7 @@ ja:
 <%- OOHelper::Models.new(csv_fname).models do |m| -%>
 <%- # index.html -%>
 <%= m.single %>-index,cattrs,controller,<%= m.multiple %>
-<%= m.single %>-index,cattrs,view,index
+<%= m.single %>-index,cattrs,views,index
 <%= m.single %>-index,cattrs,location,main
 <%= m.single %>-index,cattrs,template,index
 <%= m.single %>-index,cattrs,input,<%= m.multiple %>
@@ -72,7 +72,7 @@ ja:
 <%- end -%>
 <%- # new.html -%>
 <%= m.single %>-new,cattrs,controller,<%= m.multiple %>
-<%= m.single %>-new,cattrs,view,new
+<%= m.single %>-new,cattrs,views,new
 <%= m.single %>-new,cattrs,location,main
 <%= m.single %>-new,cattrs,template,index
 <%= m.single %>-new,cattrs,input,<%= m.single %>
