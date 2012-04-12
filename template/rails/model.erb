@@ -5,7 +5,7 @@
 <%- OOHelper::Models.new(csv_fname).models do |m| -%>
 <% migration_file_suffix+=1 %>
 --[db/migrate/<%= (Time.now + migration_file_suffix).strftime('%Y%m%d%H%M%S') %>_create_<%= m.table_name %>.rb:c]-------------------------------------------
-class Create<%= m.camelize %> < ActiveRecord::Migration
+class Create<%= m.multiple.camelize %> < ActiveRecord::Migration
   def change
     create_table :<%= m.table_name %> do |t|
       <%- m.attrs do |a| -%>
