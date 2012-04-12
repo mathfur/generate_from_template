@@ -173,7 +173,7 @@ end
   - <%= t.transform %>.each do |<%= t.controller.singularize %>|
     %tr
       <%- t.attrs do |a| -%>
-      %td.<%= a.name %>{:title => <%= a.tooltip == '' ? '""' : a.tooltip %>}= <%= a.cell_val.present? ? a.cell_val : "''" %>
+      %td.<%= a.name %>{:title => <%= a.tooltip.blank? ? '""' : a.tooltip %>}= <%= a.cell_val.present? ? a.cell_val : "''" %>
       <%- end -%>
 --
 
