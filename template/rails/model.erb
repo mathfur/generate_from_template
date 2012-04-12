@@ -48,7 +48,7 @@ ja:
       <%- OOHelper::Models.new(csv_fname).models do |m| -%>
       <%= m.instance %>:
         <%- m.attrs do |a| -%>
-        <%= a.name %>: <%= NKF.nkf("-w",a.ja_name || "") %>
+        <%= a.name %>: <%= a.ja_name %>
         <%- end -%>
       <%- end -%>
 --
