@@ -71,7 +71,7 @@ end
 
 <%- controllers_and_views = OOHelper::Models.new(csv_fname).models.map{|t| t.views.split(',').map{|v| [t.controller, v]} }.inject([]){|s, e| s + e}.sort.uniq -%>
 
-<%- controllers_and_views.map{|c, _| c}.each do |controller| -%>
+<%- controllers_and_views.map{|c, _| c}.uniq.each do |controller| -%>
 --[app/controllers/<%= controller %>_controller.rb:c]----------------------
 class <%= controller.camelize %>Controller < ApplicationController
   def index
