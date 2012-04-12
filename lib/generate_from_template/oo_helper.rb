@@ -139,7 +139,7 @@ module OOHelper
         end
       end
 
-      @all_attr_info.keys.each do |func_name| # e.g. func_name = "css"
+      @all_attr_info.keys.compact.each do |func_name| # e.g. func_name = "css"
         self.class.class_eval do
           define_method func_name do |*args|
             tbl_name = args[0] # TODO: extract_optionsに変換する
