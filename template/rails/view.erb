@@ -2,22 +2,55 @@
 
 <!-- View -->
 --[app/views/layouts/application.html.haml:c]-------------------------------------------
-!!!
+!!! 5
 %html
   %head
-    %title= @title
-    %meta{:'http-equiv' => "Content-Type", :content => "text/html;charset=utf-8"}
-    = stylesheet_link_tag "application"
-    = javascript_include_tag "application"
+    %meta(charset="utf-8")
     = csrf_meta_tags
-    %link{:href => "stylesheet/application.css", :rel => "stylesheet", :type => "text/css"}
+    %meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    %title= content_for?(:title) ? yield(:title) : "CheckpadEmulate"
+    = stylesheet_link_tag "application", :media => "all"
+    / Le HTML5 shim, for IE6-8 support of HTML elements
+    /[if lt IE 9]
+      = javascript_include_tag "http://html5shim.googlecode.com/svn/trunk/html5.js"
+    %link(href="images/favicon.ico" rel="shortcut icon")
+    %link(href="images/apple-touch-icon.png" rel="apple-touch-icon")
+    %link(href="images/apple-touch-icon-72x72.png" rel="apple-touch-icon" sizes="72x72")
+    %link(href="images/apple-touch-icon-114x114.png" rel="apple-touch-icon" sizes="114x114")
   %body
     %div#container
-      %div#header= render 'shared/header'
-      %div#main= yield :main
-      %div#submenu= yield :submenu
-      %div#footer= render 'shared/footer'
+      .navbar.navbar-fixed-top
+        .navbar-inner
+          .container-fluid
+            %a.btn.btn-navbar(data-target=".nav-collapse" data-toggle="collapse")
+              %span.icon-bar
+              %span.icon-bar
+              %span.icon-bar
+            %a.brand(href="#") CheckpadEmulate
+            .container.nav-collapse
+              %ul.nav
+                %li= render 'shared/header'
+
+      .container-fluid
+
+        .row-fluid
+          .span3
+            .well.sidebar-nav
+              %ul.nav.nav-list
+                %li.nav-header Sidebar
+                %li= yield :submenu
+          .span9
+            = yield :main
+
+        %footer
+          %p= render 'shared/footer'
+      /
+        Javascripts
+        \==================================================
+      / Placed at the end of the document so the pages load faster
+      = javascript_include_tag "application"
 --
+
 
 --[app/views/shared/_header.html.haml:c]---------------------------
 %ul#global_menu
@@ -173,6 +206,14 @@ end
 
 <!-- assets -->
 --[app/assets/stylesheets/application.css.scss:c]-------------------------------------------
+<%- thema = :bootstrap -%>
+<%- case thema -%>
+<%- when :bootstrap -%>
+/*
+ *= require_self
+ *= require_tree .
+*/
+<%- when :default -%>
 /*
  *= require_self
  *= require_tree .
@@ -271,6 +312,7 @@ body { font-size: 13px; }
     font-weight: normal;
     margin:      0;
 }
+<%- end -%>
 
 /* 各テーブルに対応するCSS */
 <%- OOHelper::Models.new(csv_fname).models do |t| -%>
@@ -283,6 +325,7 @@ table.<%= t.single %> th { border: 1px solid #888888 }
 table.<%= t.single %> td { border: 1px solid #888888 }
 table.<%= t.single %> th { text-style: bold }
 table.<%= t.single %> th { color: #ffffff }
+
 <%- case t.template -%>
 <%- when "index" -%>
 
@@ -322,6 +365,46 @@ $('td.<%= a.name %>').Tooltip();
 
 <%- end # case end -%>
 <%- end -%>
+
+--
+
+--[app/assets/javascripts/bootstrap.js.coffee:c]-----------------
+jQuery ->
+  $("a[rel=popover]").popover()
+  $(".tooltip").tooltip()
+  $("a[rel=tooltip]").tooltip()
+--
+
+--[app/assets/stylesheets/bootstrap_and_overrides.css.less:c]----------------
+@import "twitter/bootstrap/bootstrap";
+body { padding-top: 60px; }
+
+@import "twitter/bootstrap/responsive";
+
+// Set the correct sprite paths
+@iconSpritePath: asset-path('twitter/bootstrap/glyphicons-halflings.png');
+@iconWhiteSpritePath: asset-path('twitter/bootstrap/glyphicons-halflings-white.png');
+
+// Set the Font Awesome (Font Awesome is default. You can disable by commenting below lines)
+@fontAwesomeEotPath: asset-path('fontawesome-webfont.eot');
+@fontAwesomeWoffPath: asset-path('fontawesome-webfont.woff');
+@fontAwesomeTtfPath: asset-path('fontawesome-webfont.ttf');
+@fontAwesomeSvgzPath: asset-path('fontawesome-webfont.svgz');
+@fontAwesomeSvgPath: asset-path('fontawesome-webfont.svg');
+
+// Font Awesome
+@import "fontawesome";
+
+// Your custom LESS stylesheets goes here
+//
+// Since bootstrap was imported above you have access to its mixins which
+// you may use and inherit here
+//
+// If you'd like to override bootstrap's own variables, you can do so here as well
+// See http://twitter.github.com/bootstrap/less.html for their names and documentation
+//
+// Example:
+// @linkColor: #ff0000;
 
 --
 
