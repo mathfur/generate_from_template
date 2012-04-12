@@ -57,17 +57,31 @@ ja:
 ,,,etc,etc,etc,etc,etc,css,css,
 ,,,cattr_val,header,cell_val,klass,tooltip,text-align,width,
 <%- OOHelper::Models.new(csv_fname).models do |m| -%>
+<%- # index.html -%>
 <%= m.single %>-index,cattrs,controller,<%= m.multiple %>
 <%= m.single %>-index,cattrs,view,index
 <%= m.single %>-index,cattrs,location,main
 <%= m.single %>-index,cattrs,template,index
-<%= m.single %>-index,cattrs,input,<%= m.single %>
-<%= m.single %>-index,cattrs,transform,<%= m.single %>
-<%= m.single %>-index,cattrs,ja_name,<%= m.single %>
-<%= m.single %>-index,cattrs,in_global_menu,<%= m.single %>
-<%= m.single %>-index,cattrs,header,<%= m.single %>
+<%= m.single %>-index,cattrs,input,<%= m.multiple %>
+<%= m.single %>-index,cattrs,transform,<%= m.multiple %>
+<%= m.single %>-index,cattrs,ja_name,<%= m.single %>_ja_name_TODO
+<%= m.single %>-index,cattrs,in_global_menu,TRUE
+<%= m.single %>-index,cattrs,header,xxxHEADER(<%= m.single %>_index)
 <%- m.attrs do |a| -%>
 <%= m.single %>-index,attrs,<%= a.name %>,,,<%= a.name %>
+<%- end -%>
+<%- # new.html -%>
+<%= m.single %>-new,cattrs,controller,<%= m.multiple %>
+<%= m.single %>-new,cattrs,view,new
+<%= m.single %>-new,cattrs,location,main
+<%= m.single %>-new,cattrs,template,index
+<%= m.single %>-new,cattrs,input,<%= m.single %>
+<%= m.single %>-new,cattrs,transform,<%= m.single %>
+<%= m.single %>-new,cattrs,ja_name,<%= m.single %>_ja_name_TODO
+<%= m.single %>-new,cattrs,in_global_menu,<%= m.single %>
+<%= m.single %>-new,cattrs,header,xxxHEADER(<%= m.single %>_new)
+<%- m.attrs do |a| -%>
+<%= m.single %>-new,attrs,<%= a.name %>,,,<%= a.name %>
 <%- end -%>
 <%- end -%>
 --
