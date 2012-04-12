@@ -33,9 +33,88 @@
 <%- OOHelper::Models.new(csv_fname).models do |t| -%>
   resources :<%= t.controller %>
 <%- end -%>
+end
 --
 
-<%- OOHelper::Models.new(csv_fname).models.map{|t| t.views.split(',').map{|v| [t.controller, v]} }.inject([]){|s, e| s + e}.sort.uniq.each do |controller_name, view_name| -%>
+<%- controllers_and_views = OOHelper::Models.new(csv_fname).models.map{|t| t.views.split(',').map{|v| [t.controller, v]} }.inject([]){|s, e| s + e}.sort.uniq -%>
+
+<%- controllers_and_views.map{|c, _| c}.each do |controller| -%>
+--[app/controllers/<%= controller %>_controller.rb:c]----------------------
+class <%= controller.camelize %>Controller < ApplicationController
+  def index
+    @<%= controller.pluralize %> = <%= controller.singularize.camelize %>.all
+
+    respond_to do |format|
+      format.html
+      format.json { render json: @<%= controller.pluralize %> }
+    end
+  end
+
+  def show
+    @<%= controller.singularize %> = <%= controller.singularize.camelize %>.find(params[:id])
+
+    respond_to do |format|
+      format.html
+      format.json { render json: @<%= controller.singularize %> }
+    end
+  end
+
+  def new
+    @<%= controller.singularize %> = <%= controller.singularize.camelize %>.new
+
+    respond_to do |format|
+      format.html
+      format.json { render json: @<%= controller.singularize %> }
+    end
+  end
+
+  def edit
+    @<%= controller.singularize %> = <%= controller.singularize.camelize %>.find(params[:id])
+  end
+
+  def create
+    @<%= controller.singularize %> = <%= controller.singularize.camelize %>.new(params[:<%= controller.singularize %>])
+
+    respond_to do |format|
+      if @<%= controller.singularize %>.save
+        format.html { redirect_to @<%= controller.singularize %>, notice: '<%= controller.singularize.camelize %> was successfully created.' }
+        format.json { render json: @<%= controller.singularize %>, status: :created, location: @<%= controller.singularize %> }
+      else
+        format.html { render action: "new" }
+        format.json { render json: @<%= controller.singularize %>.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def update
+    @<%= controller.singularize %> = <%= controller.singularize.camelize %>.find(params[:id])
+
+    respond_to do |format|
+      if @<%= controller.singularize %>.update_attributes(params[:<%= controller.singularize %>])
+        format.html { redirect_to @<%= controller.singularize %>, notice: '<%= controller.singularize.camelize %> was successfully updated.' }
+        format.json { head :ok }
+      else
+        format.html { render action: "edit" }
+        format.json { render json: @<%= controller.singularize %>.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def destroy
+    @<%= controller.singularize %> = <%= controller.singularize.camelize %>.find(params[:id])
+    @<%= controller.singularize %>.destroy
+
+    respond_to do |format|
+      format.html { redirect_to <%= controller.pluralize %> }
+      format.json { head :ok }
+    end
+  end
+end
+--
+
+<%- end -%>
+
+<%- controllers_and_views.each do |controller_name, view_name| -%>
 --[app/views/<%= controller_name %>/<%= view_name %>.html.haml:c]-------------------------------------------
 <%- OOHelper::Models.new(csv_fname).models do |t| -%>
 <%- if controller_name == t.controller && t.views.split(',').include?(view_name) && t.location != '' -%>
