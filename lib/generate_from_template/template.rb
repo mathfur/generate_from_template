@@ -3,9 +3,12 @@
 require "erb"
 require "fileutils"
 require File.dirname(__FILE__) + "/oo_helper"
+require File.dirname(__FILE__) + "/template_helper"
 
 class Template
   attr_reader :erb_result
+
+  include TemplateHelper
 
   def initialize(fname, csv_fname, options = {})
     @erb_result = ERB.new(File.read(fname), nil, '-').result(binding)
