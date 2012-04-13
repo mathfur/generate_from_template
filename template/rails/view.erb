@@ -184,7 +184,7 @@ end
     <%- t.attrs do |a| -%>
     %tr
       <%- if a.header != '' -%>
-      %th.<%= a.name %>.key= <%= a.header == '{default}' ? "t('label.#{a.name}')" : a.header %>
+      %th.<%= a.name %>.key= <%= n(a.header == '{default}' ? "t('label.#{a.name}')" : a.header) %>
       <%- end -%>
       %td.<%= a.name %>.val= <%= a.cell_val.present? ? a.cell_val : "''" %>
     <%- end -%>
