@@ -152,7 +152,7 @@ end
 <%- OOHelper::Models.new(csv_fname).models do |t| -%>
 <%- if controller_name == t.controller && t.views.split(',').include?(view_name) && t.location != '' -%>
 - content_for :<%= t.location %> do
-  = render :partial => "<%= t.controller %>/<%= t.template %>.html", :locals => {:<%= t.input %> => @<%= t.input %>}
+  = render :partial => "<%= t.controller %>/<%= t.template %>.html", :locals => {<%= t.locals.present? ? t.locals.split(/\s*,\s*/).map{|w| ":#{w} => @#{w}"}.join(', ') : '' %>}
 <%- end -%>
 <%- end -%>
 --
