@@ -80,6 +80,17 @@ ja:
 <%- m.attrs do |a| -%>
 <%= m.single %>-new,attrs,<%= a.name %>,,{default},<%= a.name %>
 <%- end -%>
+<%- # show.html -%>
+<%= m.single %>-show,cattrs,views,<%= m.multiple %>#show
+<%= m.single %>-show,cattrs,location,main
+<%= m.single %>-show,cattrs,template,show
+<%= m.single %>-show,cattrs,locals,<%= m.single %>
+<%= m.single %>-show,cattrs,ja_name,<%= m.single %>_ja_name_TODO
+<%= m.single %>-show,cattrs,in_global_menu,<%= m.single %>
+<%= m.single %>-show,cattrs,header,xxxHEADER(<%= m.single %>_new
+<%- m.attrs do |a| -%>
+<%= m.single %>-show,attrs,<%= a.name %>,,{default},<%= m.single %>.<%= a.name %>
+<%- end -%>
 <%- end -%>
 --
 

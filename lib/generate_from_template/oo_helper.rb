@@ -33,7 +33,7 @@ module OOHelper
     # ==== for view.erb ===================
 
     def controllers
-      self.models.map{|m| m.controllers}.flatten
+      self.models.map{|m| m.controllers}.flatten.uniq
     end
 
     # {[cname, view_name] => models}の形のハッシュを得る

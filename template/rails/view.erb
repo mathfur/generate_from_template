@@ -168,7 +168,13 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |(cname, v
         <%- end -%>
 
 <%- when "show" -%>
-  <%= "TODO" %>
+  - <%= cname.singularize.underscore %> = @<%= cname.singularize.underscore # TODO: きれいな書き方ではないので後で直す %>
+  %table.<%= t.single %>
+    <%- t.attrs do |a| -%>
+    %tr
+      %th.<%= a.name %>.key= <%= n(a.header == '{default}' ? "t('label.#{a.name}')" : a.header) %>
+      %td.<%= a.name %>.val= <%= n(a.cell_val) %>
+    <%- end -%>
 
 <%- when "edit" -%>
   = form_for(@<%= arr(t.locals).first %>) do |f|
