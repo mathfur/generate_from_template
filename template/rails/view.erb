@@ -161,7 +161,7 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |(cname, v
       <%- t.attrs do |a| -%>
       %th.<%= a.name %>= <%= cname.singularize.camelize %>.human_attribute_name("<%= a.name %>")
       <%- end -%>
-    - @<%- t.multiple %>.<%= t.before_each %>.each do |<%= cname.singularize %>|
+    - @<%= t.before_each %>.each do |<%= cname.singularize %>|
       %tr
         <%- t.attrs do |a| -%>
         %td.<%= a.name %>{:title => <%= a.tooltip.blank? ? '""' : a.tooltip %>}= <%= a.cell_val.present? ? a.cell_val : "''" %>

@@ -67,14 +67,13 @@ ja:
 <%= m.single %>-index,cattrs,in_global_menu,TRUE
 <%= m.single %>-index,cattrs,header,xxxHEADER(<%= m.single %>_index)
 <%- m.attrs do |a| -%>
-<%= m.single %>-index,attrs,<%= a.name %>,,{default},<%= a.name %>
+<%= m.single %>-index,attrs,<%= a.name %>,,{default},<%= m.single %>.<%= a.name %>
 <%- end -%>
 <%- # new.html -%>
 <%= m.single %>-new,cattrs,views,<%= m.multiple %>#new
 <%= m.single %>-new,cattrs,location,main
 <%= m.single %>-new,cattrs,template,edit
 <%= m.single %>-new,cattrs,locals,<%= m.single %>
-<%= m.single %>-new,cattrs,before_each,<%= m.single %>
 <%= m.single %>-new,cattrs,ja_name,<%= m.single %>_ja_name_TODO
 <%= m.single %>-new,cattrs,in_global_menu,<%= m.single %>
 <%= m.single %>-new,cattrs,header,xxxHEADER(<%= m.single %>_new)
