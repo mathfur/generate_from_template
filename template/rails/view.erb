@@ -63,82 +63,80 @@
 
 --[config/routes.rb:c]--------------------------------------------
 アプリケーション名::Application.routes.draw do
-<%- OOHelper::Models.new(csv_fname).models do |t| -%>
-  resources :<%= t.controller %>
+<%- OOHelper::Models.new(csv_fname).controllers.each do |cname| -%>
+  resources :<%= cname %>
 <%- end -%>
 end
 --
 
-<%- controllers_and_views = OOHelper::Models.new(csv_fname).models.map{|t| t.views.split(',').map{|v| [t.controller, v]} }.inject([]){|s, e| s + e}.sort.uniq -%>
-
-<%- controllers_and_views.map{|c, _| c}.uniq.each do |controller| -%>
---[app/controllers/<%= controller %>_controller.rb:c]----------------------
-class <%= controller.camelize %>Controller < ApplicationController
+<%- OOHelper::Models.new(csv_fname).controllers.each do |cname| -%>
+--[app/controllers/<%= cname %>_controller.rb:c]----------------------
+class <%= cname.camelize %>Controller < ApplicationController
   def index
-    @<%= controller.pluralize %> = <%= controller.singularize.camelize %>.all
+    @<%= cname.pluralize %> = <%= cname.singularize.camelize %>.all
 
     respond_to do |format|
       format.html
-      format.json { render json: @<%= controller.pluralize %> }
+      format.json { render json: @<%= cname.pluralize %> }
     end
   end
 
   def show
-    @<%= controller.singularize %> = <%= controller.singularize.camelize %>.find(params[:id])
+    @<%= cname.singularize %> = <%= cname.singularize.camelize %>.find(params[:id])
 
     respond_to do |format|
       format.html
-      format.json { render json: @<%= controller.singularize %> }
+      format.json { render json: @<%= cname.singularize %> }
     end
   end
 
   def new
-    @<%= controller.singularize %> = <%= controller.singularize.camelize %>.new
+    @<%= cname.singularize %> = <%= cname.singularize.camelize %>.new
 
     respond_to do |format|
       format.html
-      format.json { render json: @<%= controller.singularize %> }
+      format.json { render json: @<%= cname.singularize %> }
     end
   end
 
   def edit
-    @<%= controller.singularize %> = <%= controller.singularize.camelize %>.find(params[:id])
+    @<%= cname.singularize %> = <%= cname.singularize.camelize %>.find(params[:id])
   end
 
   def create
-    @<%= controller.singularize %> = <%= controller.singularize.camelize %>.new(params[:<%= controller.singularize %>])
+    @<%= cname.singularize %> = <%= cname.singularize.camelize %>.new(params[:<%= cname.singularize %>])
 
     respond_to do |format|
-      if @<%= controller.singularize %>.save
-        format.html { redirect_to @<%= controller.singularize %>, notice: '<%= controller.singularize.camelize %> was successfully created.' }
-        format.json { render json: @<%= controller.singularize %>, status: :created, location: @<%= controller.singularize %> }
+      if @<%= cname.singularize %>.save
+        format.html { redirect_to @<%= cname.singularize %>, notice: '<%= cname.singularize.camelize %> was successfully created.' }
+        format.json { render json: @<%= cname.singularize %>, status: :created, location: @<%= cname.singularize %> }
       else
         format.html { render action: "new" }
-        format.json { render json: @<%= controller.singularize %>.errors, status: :unprocessable_entity }
+        format.json { render json: @<%= cname.singularize %>.errors, status: :unprocessable_entity }
       end
     end
   end
 
   def update
-    @<%= controller.singularize %> = <%= controller.singularize.camelize %>.find(params[:id])
+    @<%= cname.singularize %> = <%= cname.singularize.camelize %>.find(params[:id])
 
     respond_to do |format|
-      if @<%= controller.singularize %>.update_attributes(params[:<%= controller.singularize %>])
-        format.html { redirect_to @<%= controller.singularize %>, notice: '<%= controller.singularize.camelize %> was successfully updated.' }
+      if @<%= cname.singularize %>.update_attributes(params[:<%= cname.singularize %>])
+        format.html { redirect_to @<%= cname.singularize %>, notice: '<%= cname.singularize.camelize %> was successfully updated.' }
         format.json { head :ok }
       else
         format.html { render action: "edit" }
-        format.json { render json: @<%= controller.singularize %>.errors, status: :unprocessable_entity }
+        format.json { render json: @<%= cname.singularize %>.errors, status: :unprocessable_entity }
       end
     end
   end
 
   def destroy
-    @<%= controller.singularize %> = <%= controller.singularize.camelize %>.find(params[:id])
-    @<%= controller.singularize %>.destroy
+    @<%= cname.singularize %> = <%= cname.singularize.camelize %>.find(params[:id])
+    @<%= cname.singularize %>.destroy
 
     respond_to do |format|
-      format.html { redirect_to <%= controller.pluralize %> }
+      format.html { redirect_to <%= cname.pluralize %> }
       format.json { head :ok }
     end
   end
@@ -147,63 +145,58 @@ end
 
 <%- end -%>
 
-<%- controllers_and_views.each do |controller_name, view_name| -%>
---[app/views/<%= controller_name %>/<%= view_name %>.html.haml:c]-------------------------------------------
-<%- OOHelper::Models.new(csv_fname).models do |t| -%>
-<%- if controller_name == t.controller && t.views.split(',').include?(view_name) && t.location != '' -%>
-- content_for :<%= t.location %> do
-  = render :partial => "<%= t.controller %>/<%= t.template %>.html", :locals => {<%= t.locals.present? ? t.locals.split(/\s*,\s*/).map{|w| ":#{w} => @#{w}"}.join(', ') : '' %>}
-<%- end -%>
-<%- end -%>
---
-
-<%- end -%>
-
-
-<%- OOHelper::Models.new(csv_fname).models do |t| -%>
+<%-
+OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |(cname, view_name), models| -%>
+--[app/views/<%= cname %>/<%= view_name %>.html.haml:c]-------------------------------------------
+<%- models.group_by{|m| m.location}.each do |location, models_| -%>
+- content_for :<%= location %> do
+<%- models_.each do |t| -%>
+<%- if 2 <= t.views_group_by_cont.size -%>
+  = render :partial => "<%= cname %>/<%= view_name(TODO) %>.html", :locals => {<%= t.locals.present? ? t.locals.split(/\s*,\s*/).map{|w| ":#{w} => @#{w}"}.join(', ') : '' %>}
+<%- else -%>
 <%- case t.template -%>
 <%- when "index" -%>
-
---[app/views/<%= t.controller %>/_index.html.haml:c]-------------------------------------------
-%table.<%= t.single %>
-  %tr
-    <%- t.attrs do |a| -%>
-    %th.<%= a.name %>= <%= t.controller.singularize.camelize %>.human_attribute_name("<%= a.name %>")
-    <%- end -%>
-  - <%= t.transform %>.each do |<%= t.controller.singularize %>|
+  %table.<%= t.single %>
     %tr
       <%- t.attrs do |a| -%>
-      %td.<%= a.name %>{:title => <%= a.tooltip.blank? ? '""' : a.tooltip %>}= <%= a.cell_val.present? ? a.cell_val : "''" %>
+      %th.<%= a.name %>= <%= cname.singularize.camelize %>.human_attribute_name("<%= a.name %>")
       <%- end -%>
---
+    - @<%- t.multiple %>.<%= t.before_each %>.each do |<%= cname.singularize %>|
+      %tr
+        <%- t.attrs do |a| -%>
+        %td.<%= a.name %>{:title => <%= a.tooltip.blank? ? '""' : a.tooltip %>}= <%= a.cell_val.present? ? a.cell_val : "''" %>
+        <%- end -%>
+
+<%- when "show" -%>
+  <%= "TODO" %>
 
 <%- when "edit" -%>
---[app/views/<%= t.controller %>/_edit.html.haml:c]-------------------------------------------
-= form_for(<%= t.input %>) do |form|
+  = form_for(@<%= arr(t.locals).first %>) do |f|
+    %table.<%= t.single %>
+      <%- t.attrs do |a| -%>
+      %tr
+        <%- if a.header != '' -%>
+        %th.<%= a.name %>.key= <%= n(a.header == '{default}' ? "t('label.#{a.name}')" : a.header) %>
+        <%- end -%>
+        %td.<%= a.name %>.val= f.text_field :<%= a.cell_val.present? ? a.cell_val : "''" %>
+      <%- end -%>
+
+<%- when "menu" -%>
   %table.<%= t.single %>
     <%- t.attrs do |a| -%>
     %tr
       <%- if a.header != '' -%>
-      %th.<%= a.name %>.key= <%= n(a.header == '{default}' ? "t('label.#{a.name}')" : a.header) %>
+      %th.<%= a.name %>.key <%= a.header %>
       <%- end -%>
       %td.<%= a.name %>.val= <%= a.cell_val.present? ? a.cell_val : "''" %>
     <%- end -%>
---
-
-<%- when "menu" -%>
---[app/views/<%= t.controller %>/_menu.html.haml:c]-------------------------------------------
-
-%table.<%= t.single %>
-  <%- t.attrs do |a| -%>
-  %tr
-    <%- if a.header != '' -%>
-    %th.<%= a.name %>.key <%= a.header %>
-    <%- end -%>
-    %td.<%= a.name %>.val= <%= a.cell_val.present? ? a.cell_val : "''" %>
-  <%- end -%>
---
 <%- end # case end -%>
-<%- end -%>
+--
+
+<%- end # if 共通 end -%>
+<%- end # models_.each end -%>
+<%- end # group_by location eadh end -%>
+<%- end # group_by views each end -%>
 
 <!-- assets -->
 --[app/assets/stylesheets/application.css.scss:c]-------------------------------------------

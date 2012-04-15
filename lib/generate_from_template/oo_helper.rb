@@ -29,6 +29,23 @@ module OOHelper
     def set_special_models
       @special_models = @hash.select{|m, _| m =~ /^__/ }.map{|m, info| [ m[/^__(.*)$/, 1], info]}
     end
+
+    # ==== for view.erb ===================
+
+    def controllers
+      self.models.map{|m| m.controllers}.flatten
+    end
+
+    # {[cname, view_name] => models}の形のハッシュを得る
+    def models_group_by_cont_and_view
+      self.models.inject({}) do |result, m|
+        m.views_group_by_cont.each do |cname, view_names|
+          result[[cname, view_names]] ||= []
+          result[[cname, view_names]] << m
+        end
+        result
+      end
+    end
   end
 
   class Model
@@ -40,7 +57,6 @@ module OOHelper
 
       # attrにある属性にはa.fooのようにアクセスできるようにする
       ((@model_info["attrs"] || {}).keys - self.methods).each do |name_|
-        p model if name_ == "name"
         self.class.class_eval do
           define_method name_ do |*args|
             (@model_info["attrs"] || {})[name_]["etc"]
@@ -84,6 +100,24 @@ module OOHelper
 
     def controller_name
       @model.pluralize + "_controller"
+    end
+
+    # ==== for view.erb ===================
+
+    # views欄からコントローラ名一覧を取得
+    def controllers
+      self.views_group_by_cont.blank? ? [] : self.views_group_by_cont.keys.uniq
+    end
+
+    # {コントローラ名 => [ビュー名1, ビュー名2 .. ]}の形のハッシュを返す
+    def views_group_by_cont
+      return [] if self.views.blank?
+      #@model.views.uniq.scan(/([\w_]+)#([\w_]+)/).inject({}) do |result, (controller_name, view_name)|
+      #  result[controller_name] ||= []
+      #  result[controller_name] << view_name
+      #  result
+      #end
+      Hash[*(self.views.scan(/([\w_]+)#([\w_]+)/)).flatten]
     end
 
     alias :model :model_name
@@ -131,10 +165,11 @@ module OOHelper
               # a.default "null" ":default => $v"のように書くと、
               # defaultの値が"null"の時は空文字列、その他の場合は":default => #{@etc_only_attr_info[name]}"を返す
               value_is_null, value_is_not_null = args
-              @etc_only_attr_info[name] == value_is_null ? "" : value_is_not_null.gsub('$v', @etc_only_attr_info[name].to_s).gsub(/\bTRUE\b/, "true").gsub(/\bFALSE\b/, "false")
+              v = @etc_only_attr_info[name] == value_is_null ? "" : value_is_not_null.gsub('$v', @etc_only_attr_info[name].to_s).gsub(/\bTRUE\b/, "true").gsub(/\bFALSE\b/, "false")
             else
-              @etc_only_attr_info[name]
+              v = @etc_only_attr_info[name]
             end
+            NKF.nkf('-w', v.to_s)
           end
         end
       end
