@@ -156,7 +156,7 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |(cname, v
 <%- else -%>
 <%- case t.template -%>
 <%- when "index" -%>
-  %table.<%= t.single %>
+  %table.<%= t.single %>.table.table-striped.table-bordered.table-condense
     %tr
       <%- t.attrs do |a| -%>
       %th.<%= a.name %>= <%= cname.singularize.camelize %>.human_attribute_name("<%= a.name %>")
@@ -168,8 +168,9 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |(cname, v
         <%- end -%>
 
 <%- when "show" -%>
-  - <%= cname.singularize.underscore %> = @<%= cname.singularize.underscore # TODO: きれいな書き方ではないので後で直す %>
-  %table.<%= t.single %>
+  <%- # TODO: きれいな書き方ではないので後で直す -%>
+  - <%= cname.singularize.underscore %> = @<%= cname.singularize.underscore %>
+  %table.<%= t.single %>.table.table-striped.table-bordered.table-condense
     <%- t.attrs do |a| -%>
     %tr
       %th.<%= a.name %>.key= <%= n(a.header == '{default}' ? "t('label.#{a.name}')" : a.header) %>
@@ -178,7 +179,7 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |(cname, v
 
 <%- when "edit" -%>
   = form_for(@<%= arr(t.locals).first %>) do |f|
-    %table.<%= t.single %>
+    %table.<%= t.single %>.table.table-striped.table-bordered.table-condense
       <%- t.attrs do |a| -%>
       %tr
         <%- if a.header != '' -%>
@@ -188,7 +189,7 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |(cname, v
       <%- end -%>
 
 <%- when "menu" -%>
-  %table.<%= t.single %>
+  %table.<%= t.single %>.table.table-striped.table-bordered.table-condense
     <%- t.attrs do |a| -%>
     %tr
       <%- if a.header != '' -%>
@@ -316,15 +317,16 @@ body { font-size: 13px; }
 
 /* 各テーブルに対応するCSS */
 <%- OOHelper::Models.new(csv_fname).models do |t| -%>
-table.<%= t.single %> { background-color: #ffffff }
-//table.<%= t.single %> { box-shadow: 2px 2px 2px rgba(30, 30, 30, 0.8); }
-table.<%= t.single %> th { background: #0030ac }
-table.<%= t.single %> { border-collapse: collapse; }
-table.<%= t.single %> { border: 1px solid #4b4b4b }
-table.<%= t.single %> th { border: 1px solid #888888 }
-table.<%= t.single %> td { border: 1px solid #888888 }
-table.<%= t.single %> th { text-style: bold }
-table.<%= t.single %> th { color: #ffffff }
+// bootstrap優先のため一旦コメントアウト
+//table.<%= t.single %> { background-color: #ffffff }
+////table.<%= t.single %> { box-shadow: 2px 2px 2px rgba(30, 30, 30, 0.8); }
+//table.<%= t.single %> th { background: #0030ac }
+//table.<%= t.single %> { border-collapse: collapse; }
+//table.<%= t.single %> { border: 1px solid #4b4b4b }
+//table.<%= t.single %> th { border: 1px solid #888888 }
+//table.<%= t.single %> td { border: 1px solid #888888 }
+//table.<%= t.single %> th { text-style: bold }
+//table.<%= t.single %> th { color: #ffffff }
 
 <%- case t.template -%>
 <%- when "index" -%>
