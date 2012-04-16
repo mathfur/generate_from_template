@@ -187,6 +187,10 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |(cname, v
         <%- end -%>
         %td.<%= a.name %>.val= f.text_field :<%= a.cell_val.present? ? a.cell_val : "''" %>
       <%- end -%>
+    <%- case t.submit -%>
+    <%- when "normal" -%>
+    = f.submit
+    <%- end -%>
 
 <%- when "menu" -%>
   %table.<%= t.single %>.table.table-striped.table-bordered.table-condense
