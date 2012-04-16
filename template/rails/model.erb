@@ -67,7 +67,7 @@ ja:
 <%= m.single %>-index,cattrs,in_global_menu,TRUE
 <%= m.single %>-index,cattrs,header,xxxHEADER(<%= m.single %>_index)
 <%- m.attrs do |a| -%>
-<%= m.single %>-index,attrs,<%= a.name %>,,{default},<%= m.single %>.<%= a.name %>
+<%= m.single %>-index,attrs,<%= a.name %>,,{default},"link_to <%= m.single %>.<%= a.name %>, <%= m.single %>_path(<%= m.single %>.id)"
 <%- end -%>
 <%- # new.html -%>
 <%= m.single %>-new,cattrs,views,<%= m.multiple %>#new
