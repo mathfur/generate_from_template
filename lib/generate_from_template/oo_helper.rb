@@ -39,9 +39,9 @@ module OOHelper
     # {[cname, view_name] => models}の形のハッシュを得る
     def models_group_by_cont_and_view
       self.models.inject({}) do |result, m|
-        m.views_group_by_cont.each do |cname, view_names|
-          result[[cname, view_names]] ||= []
-          result[[cname, view_names]] << m
+        m.views_group_by_cont.each do |cname, view_name|
+          result[[cname, view_name]] ||= []
+          result[[cname, view_name]] << m
         end
         result
       end
@@ -106,10 +106,10 @@ module OOHelper
 
     # views欄からコントローラ名一覧を取得
     def controllers
-      self.views_group_by_cont.blank? ? [] : self.views_group_by_cont.keys.uniq
+      self.views_group_by_cont.blank? ? [] : self.views_group_by_cont.map{|k,v| k}.uniq
     end
 
-    # {コントローラ名 => [ビュー名1, ビュー名2 .. ]}の形のハッシュを返す
+    # [[コントローラ名,ビュー名]]の形のハッシュを返す
     def views_group_by_cont
       return [] if self.views.blank?
       #@model.views.uniq.scan(/([\w_]+)#([\w_]+)/).inject({}) do |result, (controller_name, view_name)|
@@ -117,7 +117,7 @@ module OOHelper
       #  result[controller_name] << view_name
       #  result
       #end
-      Hash[*(self.views.scan(/([\w_]+)#([\w_]+)/)).flatten]
+      self.views.scan(/([\w_]+)#([\w_]+)/)
     end
 
     alias :model :model_name

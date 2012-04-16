@@ -152,7 +152,7 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |(cname, v
 - content_for :<%= location %> do
 <%- models_.each do |t| -%>
 <%- if 2 <= t.views_group_by_cont.size -%>
-  = render :partial => "<%= cname %>/<%= view_name(TODO) %>.html", :locals => {<%= t.locals.present? ? t.locals.split(/\s*,\s*/).map{|w| ":#{w} => @#{w}"}.join(', ') : '' %>}
+  = render "<%= cname %>/<%= view_name %>", :locals => {<%= t.locals.present? ? t.locals.split(/\s*,\s*/).map{|w| ":#{w} => @#{w}"}.join(', ') : '' %>}
 <%- else -%>
 <%- case t.template -%>
 <%- when "index" -%>
@@ -202,9 +202,9 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |(cname, v
       %td.<%= a.name %>.val= <%= a.cell_val.present? ? a.cell_val : "''" %>
     <%- end -%>
 <%- end # case end -%>
+<%- end # if 共通 end -%>
 --
 
-<%- end # if 共通 end -%>
 <%- end # models_.each end -%>
 <%- end # group_by location eadh end -%>
 <%- end # group_by views each end -%>
