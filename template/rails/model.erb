@@ -61,7 +61,7 @@ ja:
 <%= m.single %>-index,cattrs,views,<%= m.multiple %>#index
 <%= m.single %>-index,cattrs,location,main
 <%= m.single %>-index,cattrs,template,index
-<%= m.single %>-index,cattrs,input,<%= m.multiple %>
+<%= m.single %>-index,cattrs,locals,<%= m.multiple %>
 <%= m.single %>-index,cattrs,before_each,<%= m.multiple %>
 <%= m.single %>-index,cattrs,ja_name,<%= m.single %>_ja_name_TODO
 <%= m.single %>-index,cattrs,in_global_menu,TRUE
@@ -69,17 +69,17 @@ ja:
 <%- m.attrs do |a| -%>
 <%= m.single %>-index,attrs,<%= a.name %>,,{default},"link_to <%= m.single %>.<%= a.name %>, <%= m.single %>_path(<%= m.single %>.id)"
 <%- end -%>
-<%- # new.html -%>
-<%= m.single %>-new,cattrs,views,<%= m.multiple %>#new
-<%= m.single %>-new,cattrs,location,main
-<%= m.single %>-new,cattrs,template,edit
-<%= m.single %>-new,cattrs,locals,<%= m.single %>
-<%= m.single %>-new,cattrs,ja_name,<%= m.single %>_ja_name_TODO
-<%= m.single %>-new,cattrs,in_global_menu,<%= m.single %>
-<%= m.single %>-new,cattrs,header,xxxHEADER(<%= m.single %>_new)
-<%= m.single %>-new,cattrs,submit,normal
+<%- # new.html, edit.html用 -%>
+<%= m.single %>-edit,cattrs,views,"<%= m.multiple %>#new, <%= m.multiple %>#edit"
+<%= m.single %>-edit,cattrs,location,main
+<%= m.single %>-edit,cattrs,template,edit
+<%= m.single %>-edit,cattrs,locals,<%= m.single %>
+<%= m.single %>-edit,cattrs,ja_name,<%= m.single %>_ja_name_TODO
+<%= m.single %>-edit,cattrs,in_global_menu,<%= m.single %>
+<%= m.single %>-edit,cattrs,header,xxxHEADER(<%= m.single %>_new)
+<%= m.single %>-edit,cattrs,submit,normal
 <%- m.attrs do |a| -%>
-<%= m.single %>-new,attrs,<%= a.name %>,,{default},<%= a.name %>
+<%= m.single %>-edit,attrs,<%= a.name %>,,{default},<%= a.name %>
 <%- end -%>
 <%- # show.html -%>
 <%= m.single %>-show,cattrs,views,<%= m.multiple %>#show

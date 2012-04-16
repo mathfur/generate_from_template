@@ -151,63 +151,62 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |(cname, v
 <%- models.group_by{|m| m.location}.each do |location, models_| -%>
 - content_for :<%= location %> do
 <%- models_.each do |t| -%>
-<%- if 2 <= t.views_group_by_cont.size -%>
-  = render "<%= cname %>/<%= view_name %>", :locals => {<%= t.locals.present? ? t.locals.split(/\s*,\s*/).map{|w| ":#{w} => @#{w}"}.join(', ') : '' %>}
-<%- else -%>
-<%- case t.template -%>
-<%- when "index" -%>
-  %table.<%= t.single %>.table.table-striped.table-bordered.table-condense
-    %tr
-      <%- t.attrs do |a| -%>
-      %th.<%= a.name %>= <%= cname.singularize.camelize %>.human_attribute_name("<%= a.name %>")
-      <%- end -%>
-    - @<%= t.before_each %>.each do |<%= cname.singularize %>|
-      %tr
-        <%- t.attrs do |a| -%>
-        %td.<%= a.name %>{:title => <%= a.tooltip.blank? ? '""' : a.tooltip %>}= <%= a.cell_val.present? ? a.cell_val : "''" %>
-        <%- end -%>
-
-<%- when "show" -%>
-  <%- # TODO: きれいな書き方ではないので後で直す -%>
-  - <%= cname.singularize.underscore %> = @<%= cname.singularize.underscore %>
-  %table.<%= t.single %>.table.table-striped.table-bordered.table-condense
-    <%- t.attrs do |a| -%>
-    %tr
-      %th.<%= a.name %>.key= <%= n(a.header == '{default}' ? "t('label.#{a.name}')" : a.header) %>
-      %td.<%= a.name %>.val= <%= n(a.cell_val) %>
-    <%- end -%>
-
-<%- when "edit" -%>
-  = form_for(@<%= arr(t.locals).first %>) do |f|
-    %table.<%= t.single %>.table.table-striped.table-bordered.table-condense
-      <%- t.attrs do |a| -%>
-      %tr
-        <%- if a.header != '' -%>
-        %th.<%= a.name %>.key= <%= n(a.header == '{default}' ? "t('label.#{a.name}')" : a.header) %>
-        <%- end -%>
-        %td.<%= a.name %>.val= f.text_field :<%= a.cell_val.present? ? a.cell_val : "''" %>
-      <%- end -%>
-    <%- case t.submit -%>
-    <%- when "normal" -%>
-    = f.submit
-    <%- end -%>
-
-<%- when "menu" -%>
-  %table.<%= t.single %>.table.table-striped.table-bordered.table-condense
-    <%- t.attrs do |a| -%>
-    %tr
-      <%- if a.header != '' -%>
-      %th.<%= a.name %>.key <%= a.header %>
-      <%- end -%>
-      %td.<%= a.name %>.val= <%= a.cell_val.present? ? a.cell_val : "''" %>
-    <%- end -%>
-<%- end # case end -%>
-<%- end # if 共通 end -%>
+  = render "shared/<%= t.multiple %>", {<%= t.locals.present? ? t.locals.split(/\s*,\s*/).map{|w| ":#{w} => @#{w}"}.join(', ') : '' %>}
 --
 
 <%- end # models_.each end -%>
 <%- end # group_by location eadh end -%>
 <%- end # group_by views each end -%>
+
+<%- OOHelper::Models.new(csv_fname).models.each do |t| -%>
+--[app/views/shared/_<%= t.multiple %>.html.haml:c]-------------------------------------------
+<%- case t.template -%>
+<%- when "index" -%>
+%table.<%= t.single %>.table.table-striped.table-bordered.table-condense
+  %tr
+    <%- t.attrs do |a| -%>
+    %th.<%= a.name %>= <%= t.locals.singularize.camelize %>.human_attribute_name("<%= a.name %>")
+    <%- end -%>
+  - <%= t.before_each %>.each do |<%= t.locals.singularize %>|
+    %tr
+      <%- t.attrs do |a| -%>
+      %td.<%= a.name %>{:title => <%= a.tooltip.blank? ? '""' : a.tooltip %>}= <%= a.cell_val.present? ? a.cell_val : "''" %>
+      <%- end -%>
+
+<%- when "show" -%>
+%table.<%= t.single %>.table.table-striped.table-bordered.table-condense
+  <%- t.attrs do |a| -%>
+  %tr
+    %th.<%= a.name %>.key= <%= n(a.header == '{default}' ? "t('label.#{a.name}')" : a.header) %>
+    %td.<%= a.name %>.val= <%= n(a.cell_val) %>
+  <%- end -%>
+
+<%- when "edit" -%>
+= form_for(@<%= arr(t.locals).first %>) do |f|
+  %table.<%= t.single %>.table.table-striped.table-bordered.table-condense
+    <%- t.attrs do |a| -%>
+    %tr
+      %th.<%= a.name %>.key= <%= n(a.header == '{default}' ? "t('label.#{a.name}')" : a.header) %>
+      %td.<%= a.name %>.val= f.text_field :<%= a.cell_val.present? ? a.cell_val : "''" %>
+    <%- end -%>
+  <%- case t.submit -%>
+  <%- when "normal" -%>
+  = f.submit
+  <%- end -%>
+
+<%- when "menu" -%>
+%table.<%= t.single %>.table.table-striped.table-bordered.table-condense
+  <%- t.attrs do |a| -%>
+  %tr
+    <%- if a.header != '' -%>
+    %th.<%= a.name %>.key <%= a.header %>
+    <%- end -%>
+    %td.<%= a.name %>.val= <%= a.cell_val.present? ? a.cell_val : "''" %>
+  <%- end -%>
+<%- end # case end -%>
+--
+
+<%- end -%>
 
 <!-- assets -->
 --[app/assets/stylesheets/application.css.scss:c]-------------------------------------------
