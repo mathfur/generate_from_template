@@ -72,14 +72,14 @@ ja:
 <%- # new.html, edit.html用 -%>
 <%= m.single %>-edit,cattrs,views,"<%= m.multiple %>#new, <%= m.multiple %>#edit"
 <%= m.single %>-edit,cattrs,location,main
-<%= m.single %>-edit,cattrs,template,edit
-<%= m.single %>-edit,cattrs,locals,<%= m.single %>
+<%= m.single %>-edit,cattrs,template,show
+<%= m.single %>-edit,cattrs,locals,"<%= m.single %>,f"
 <%= m.single %>-edit,cattrs,ja_name,<%= m.single %>_ja_name_TODO
 <%= m.single %>-edit,cattrs,in_global_menu,<%= m.single %>
 <%= m.single %>-edit,cattrs,header,xxxHEADER(<%= m.single %>_new)
 <%= m.single %>-edit,cattrs,submit,normal
 <%- m.attrs do |a| -%>
-<%= m.single %>-edit,attrs,<%= a.name %>,,{default},<%= a.name %>
+<%= m.single %>-edit,attrs,<%= a.name %>,,{default},"f.text_field :<%= a.name %>"
 <%- end -%>
 <%- # show.html -%>
 <%= m.single %>-show,cattrs,views,<%= m.multiple %>#show

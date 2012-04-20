@@ -152,10 +152,9 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |(cname, v
 - content_for :<%= location %> do
 <%- models_.each do |t| -%>
   = render "shared/<%= t.multiple %>", {<%= t.locals.present? ? t.locals.split(/\s*,\s*/).map{|w| ":#{w} => @#{w}"}.join(', ') : '' %>}
---
-
 <%- end # models_.each end -%>
 <%- end # group_by location eadh end -%>
+--
 <%- end # group_by views each end -%>
 
 <%- OOHelper::Models.new(csv_fname).models.each do |t| -%>
@@ -179,19 +178,6 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |(cname, v
   %tr
     %th.<%= a.name %>.key= <%= n(a.header == '{default}' ? "t('label.#{a.name}')" : a.header) %>
     %td.<%= a.name %>.val= <%= n(a.cell_val) %>
-  <%- end -%>
-
-<%- when "edit" -%>
-= form_for(@<%= arr(t.locals).first %>) do |f|
-  %table.<%= t.single %>.table.table-striped.table-bordered.table-condense
-    <%- t.attrs do |a| -%>
-    %tr
-      %th.<%= a.name %>.key= <%= n(a.header == '{default}' ? "t('label.#{a.name}')" : a.header) %>
-      %td.<%= a.name %>.val= f.text_field :<%= a.cell_val.present? ? a.cell_val : "''" %>
-    <%- end -%>
-  <%- case t.submit -%>
-  <%- when "normal" -%>
-  = f.submit
   <%- end -%>
 
 <%- when "menu" -%>
