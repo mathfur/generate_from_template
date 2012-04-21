@@ -75,6 +75,9 @@ class <%= m.mc %>Controller < ApplicationController
 
   def show
     @<%= m.su %> = <%= m.sc %>.find(params[:id])
+    <%- m.has_one_models(models).each do |m_| -%>
+    @<%= m_.su %> = @<%= m.su %>.<%= m_.su %> || <%= m_.sc %>.new(:<%= m.su %>_id => @<%= m.su %>.id)
+    <%- end -%>
 
     respond_to do |format|
       format.html
@@ -206,6 +209,19 @@ end
 <%= m.single %>-show,cattrs,header,xxxHEADER(<%= m.single %>_new
 <%- m.attrs do |a| -%>
 <%= m.single %>-show,attrs,<%= a.name %>,,{default},<%= m.single %>.<%= a.name %>
+<%- end -%>
+<%- # ---  show.html内has_oneテーブル用 -%>
+<%- m.has_one_models(models).each do |m_| -%>
+<%= m.single %>-<%= m_.single %>-show,cattrs,views,"<%= m.multiple %>#show"
+<%= m.single %>-<%= m_.single %>-show,cattrs,location,main
+<%= m.single %>-<%= m_.single %>-show,cattrs,template,show
+<%= m.single %>-<%= m_.single %>-show,cattrs,locals,"<%= m_.single %>"
+<%= m.single %>-<%= m_.single %>-show,cattrs,ja_name,<%= m_.single %>_ja_name_TODO
+<%= m.single %>-<%= m_.single %>-show,cattrs,in_global_menu,<%= m_.single %>
+<%= m.single %>-<%= m_.single %>-show,cattrs,header,xxxHEADER(<%= m_.single %>_new)
+<%- m_.attrs do |a| -%>
+<%= m.single %>-<%= m_.single %>-show,attrs,<%= a.name %>,,{default},"<%= m_.su %>.<%= a.name %>"
+<%- end -%>
 <%- end -%>
 <%- end -%>
 --
