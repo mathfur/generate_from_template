@@ -83,6 +83,7 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |(cname, v
 
 <%- OOHelper::Models.new(csv_fname).models.each do |t| -%>
 --[app/views/shared/_<%= t.multiple %>.html.haml:c]-------------------------------------------
+<%= t.respond_to?(:before_table) ? t.before_table : '' %>
 <%- case t.template -%>
 <%- when "index" -%>
 %table.<%= t.single %>.table.table-striped.table-bordered.table-condense
@@ -114,6 +115,7 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |(cname, v
     %td.<%= a.name %>.val= <%= a.cell_val.present? ? a.cell_val : "''" %>
   <%- end -%>
 <%- end # case end -%>
+<%= t.respond_to?(:after_table) ? t.after_table : ''%>
 --
 
 <%- end -%>

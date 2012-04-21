@@ -114,12 +114,26 @@ class <%= m.mc %>Controller < ApplicationController
 
   def update
     @<%= m.su %> = <%= m.sc %>.find(params[:id])
+    <%- m.has_one_models(models).each do |m_| -%>
+    @<%= m_.su %> = <%= m_.sc %>.find(params[:<%= m_.su %>][:id])
+    <%- end -%>
 
     respond_to do |format|
-      if @<%= m.su %>.update_attributes(params[:<%= m.su %>])
-        format.html { redirect_to @<%= m.su %>, notice: '<%= m.sc %> was successfully updated.' }
-        format.json { head :ok }
-      else
+      begin
+        ActiveRecord::Base.transaction do
+          # TODO: 冗長なので後で直す
+          raise unless @<%= m.su %>.valid?
+          <%- m.has_one_models(models).each do |m_| -%>
+          raise unless @<%= m_.su %>.valid?
+          <%- end -%>
+          @<%= m.su %>.update_attributes(params[:<%= m.su %>])
+          <%- m.has_one_models(models).each do |m_| -%>
+          @<%= m_.su %>.update_attributes(params[:<%= m_.su %>])
+          <%- end -%>
+          format.html { redirect_to @<%= m.su %>, notice: '<%= m.sc %> was successfully updated.' }
+          format.json { head :ok }
+        end
+      rescue
         format.html { render action: "edit" }
         format.json { render json: @<%= m.su %>.errors, status: :unprocessable_entity }
       end
@@ -166,7 +180,21 @@ end
 <%= m.single %>-edit,cattrs,header,xxxHEADER(<%= m.single %>_new)
 <%= m.single %>-edit,cattrs,submit,normal
 <%- m.attrs do |a| -%>
-<%= m.single %>-edit,attrs,<%= a.name %>,,{default},"f.text_field :<%= a.name %>"
+<%= m.single %>-edit,attrs,<%= a.name %>,,{default},"text_field :<%= m.su %>, :<%= a.name %>"
+<%- end -%>
+<%- # ---  new.html, edit.html内has_oneテーブル用 -%>
+<%- m.has_one_models(models).each do |m_| -%>
+<%= m.single %>-<%= m_.single %>-edit,cattrs,views,"<%= m.multiple %>#new, <%= m.multiple %>#edit"
+<%= m.single %>-<%= m_.single %>-edit,cattrs,location,main
+<%= m.single %>-<%= m_.single %>-edit,cattrs,template,show
+<%= m.single %>-<%= m_.single %>-edit,cattrs,locals,"<%= m_.single %>"
+<%= m.single %>-<%= m_.single %>-edit,cattrs,ja_name,<%= m_.single %>_ja_name_TODO
+<%= m.single %>-<%= m_.single %>-edit,cattrs,in_global_menu,<%= m_.single %>
+<%= m.single %>-<%= m_.single %>-edit,cattrs,header,xxxHEADER(<%= m_.single %>_new)
+<%= m.single %>-<%= m_.single %>-edit,cattrs,before_table,"= hidden_field :<%= m_.su %>, :id"
+<%- m_.attrs do |a| -%>
+<%= m.single %>-<%= m_.single %>-edit,attrs,<%= a.name %>,,{default},"text_field :<%= m_.su %>, :<%= a.name %>"
+<%- end -%>
 <%- end -%>
 <%- # show.html -%>
 <%= m.single %>-show,cattrs,views,<%= m.multiple %>#show
