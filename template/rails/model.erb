@@ -1,5 +1,7 @@
 <% require "nkf" %>
 
+<%- models = OOHelper::Models.new(csv_fname) -%>
+
 <!-- Migration files -->
 <% migration_file_suffix ||=0 %>
 <%- OOHelper::Models.new(csv_fname).models do |m| -%>
@@ -24,13 +26,18 @@ end
 <%- end -%>
 
 <!-- Model -->
-<%- OOHelper::Models.new(csv_fname).models do |m| -%>
+<%- models.each do |m| -%>
 --[app/models/<%= m.singularize %>.rb:c]-------------------------------------------
 # -*- encoding: utf-8 -*-
-class <%= m.model_name %> < ActiveRecord::Base
-  <%- OOHelper::Models.new(csv_fname).models do |m2| -%>
-  <%= m.belongs_to?(m2) ? "belongs_to :#{m2.single}" : "#" %>
-  <%= m.has_many?(m2) ? "has_many :#{m2.table_name}" : "#" %>
+class <%= m.sc %> < ActiveRecord::Base
+  <%- m.has_one_models(models).each do |m2| -%>
+  has_one :<%= m2.su %>
+  <%- end -%>
+  <%- m.has_many_models(models).each do |m2| -%>
+  has_many :<%= m2.mu %>
+  <%- end -%>
+  <%- m.belongs_to_models(models).each do |m2| -%>
+  belongs_to :<%= m2.su %>
   <%- end -%>
 end
 --
@@ -52,6 +59,86 @@ ja:
         <%- end -%>
       <%- end -%>
 --
+
+<%- models = OOHelper::Models.new(csv_fname) -%>
+<%- models.each do |m| -%>
+--[app/controllers/<%= m.mu %>_controller.rb:c]----------------------
+class <%= m.mc %>Controller < ApplicationController
+  def index
+    @<%= m.mu %> = <%= m.sc %>.all
+
+    respond_to do |format|
+      format.html
+      format.json { render json: @<%= m.su %> }
+    end
+  end
+
+  def show
+    @<%= m.su %> = <%= m.sc %>.find(params[:id])
+
+    respond_to do |format|
+      format.html
+      format.json { render json: @<%= m.su %> }
+    end
+  end
+
+  def new
+    @<%= m.su %> = <%= m.sc %>.new
+
+    respond_to do |format|
+      format.html
+      format.json { render json: @<%= m.su %> }
+    end
+  end
+
+  def edit
+    @<%= m.su %> = <%= m.sc %>.find(params[:id])
+    <%- m.has_one_models(models).each do |m_| -%>
+    @<%= m_.su %> = @<%= m.su %>.<%= m_.su %> || <%= m_.sc %>.new(:<%= m.su %>_id => @<%= m.su %>.id)
+    <%- end -%>
+  end
+
+  def create
+    @<%= m.su %> = <%= m.sc %>.new(params[:<%= m.su %>])
+
+    respond_to do |format|
+      if @<%= m.su %>.save
+        format.html { redirect_to @<%= m.su %>, notice: '<%= m.sc %> was successfully created.' }
+        format.json { render json: @<%= m.su %>, status: :created, location: @<%= m.su %> }
+      else
+        format.html { render action: "new" }
+        format.json { render json: @<%= m.su %>.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def update
+    @<%= m.su %> = <%= m.sc %>.find(params[:id])
+
+    respond_to do |format|
+      if @<%= m.su %>.update_attributes(params[:<%= m.su %>])
+        format.html { redirect_to @<%= m.su %>, notice: '<%= m.sc %> was successfully updated.' }
+        format.json { head :ok }
+      else
+        format.html { render action: "edit" }
+        format.json { render json: @<%= m.su %>.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def destroy
+    @<%= m.su %> = <%= m.sc %>.find(params[:id])
+    @<%= m.su %>.destroy
+
+    respond_to do |format|
+      format.html { redirect_to <%= m.mu %> }
+      format.json { head :ok }
+    end
+  end
+end
+--
+
+<%- end -%>
 
 --[template/view.csv:c]-------------------------------------
 ,,,etc,etc,etc,etc,etc,css,css,

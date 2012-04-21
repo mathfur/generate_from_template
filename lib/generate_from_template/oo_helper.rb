@@ -7,18 +7,23 @@ module OOHelper
   class Models
     attr_accessor :normal_models, :special_models
 
+    include Enumerable
+
     def initialize(csv_fname)
       @hash = CSV2Hash.new(csv_fname).to_hash
       set_normal_models
     end
 
-    def models(&block)
+    def each(&block)
       _models = normal_models.map do |model, model_info|
         Model.new(model, model_info)
       end
       return _models unless block_given?
       _models.each{|m| block.call(m) }
     end
+
+    # 下位互換のため
+    alias_method :models, :each
 
     def set_normal_models
       # __で始まるモデル名は、グローバルな設定値(例えばapplication_nameなど)を
@@ -102,6 +107,11 @@ module OOHelper
       @model.pluralize + "_controller"
     end
 
+    def sc; self.singularize.camelize; end
+    def su; self.singularize.underscore; end
+    def mc; self.pluralize.camelize; end
+    def mu; self.pluralize.underscore; end
+
     # ==== for view.erb ===================
 
     # views欄からコントローラ名一覧を取得
@@ -138,12 +148,17 @@ module OOHelper
       self.attrs.keys
     end
 
-    def has_many?(m2)
-      !!m2.attr_names.find{|name| name == "#{self.singularize.underscore}_id" }
+    def relation_models(relation, all_models)
+      raise ArgumentError unless %w{belongs_to has_many has_one}.include?(relation.to_s)
+      all_models.select do |m|
+         self.respond_to?(relation.to_s) && (self.send(relation.to_s).try(:split,/\s*,\s*/) || []).include?(m.su)
+      end
     end
 
-    def belongs_to?(m2)
-      m2.has_many?(self)
+    %w{belongs_to has_many has_one}.each do |name|
+      define_method("#{name}_models") do |*args|
+        self.relation_models(name, *args)
+      end
     end
   end
 
