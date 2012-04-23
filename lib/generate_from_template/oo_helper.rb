@@ -41,12 +41,13 @@ module OOHelper
       self.models.map{|m| m.controllers}.flatten.uniq
     end
 
-    # {[cname, view_name] => models}の形のハッシュを得る
+    # {[cname, view_name] => {location => models}}の形のハッシュを得る
     def models_group_by_cont_and_view
       self.models.inject({}) do |result, m|
-        m.views_group_by_cont.each do |cname, view_name|
-          result[[cname, view_name]] ||= []
-          result[[cname, view_name]] << m
+        m.views_group_by_cont.each do |args|
+          result[args[0..-2]] ||= {}
+          result[args[0..-2]][args[-1]] ||= []
+          result[args[0..-2]][args[-1]] << m
         end
         result
       end
@@ -114,20 +115,15 @@ module OOHelper
 
     # ==== for view.erb ===================
 
-    # views欄からコントローラ名一覧を取得
+    # locations欄からコントローラ名一覧を取得
     def controllers
       self.views_group_by_cont.blank? ? [] : self.views_group_by_cont.map{|k,v| k}.uniq
     end
 
-    # [[コントローラ名,ビュー名]]の形のハッシュを返す
+    # return: [[String]]
     def views_group_by_cont
-      return [] if self.views.blank?
-      #@model.views.uniq.scan(/([\w_]+)#([\w_]+)/).inject({}) do |result, (controller_name, view_name)|
-      #  result[controller_name] ||= []
-      #  result[controller_name] << view_name
-      #  result
-      #end
-      self.views.scan(/([\w_]+)#([\w_]+)/)
+      return [] if self.locations.blank?
+      self.locations.split.map{|s| s.split(/#/) + (s=~/\#$/ ? [''] : [])}
     end
 
     alias :model :model_name

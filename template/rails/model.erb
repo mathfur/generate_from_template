@@ -60,6 +60,34 @@ ja:
       <%- end -%>
 --
 
+<%- models.each do |m| -%>
+--[app/views/<%= m.mu %>/index.html.haml:c]-------------------------
+
+--
+
+--[app/views/<%= m.mu %>/show.html.haml:c]-------------------------
+
+--
+
+--[app/views/<%= m.mu %>/new.html.haml:c]-------------------------
+%h1 Editing <%= m.su %>
+= render 'form'
+
+= link_to t('label.show'), @<%= m.su %>
+= link_to t('label.back'), <%= m.mu %>_path
+--
+
+--[app/views/<%= m.mu %>/edit.html.haml:c]-------------------------
+%h1 Editing <%= m.su %>
+= render 'form'
+
+= link_to t('label.show'), @<%= m.su %>
+= link_to t('label.back'), <%= m.mu %>_path
+--
+
+<%- end -%>
+
+
 <%- models = OOHelper::Models.new(csv_fname) -%>
 <%- models.each do |m| -%>
 --[app/controllers/<%= m.mu %>_controller.rb:c]----------------------
@@ -176,11 +204,10 @@ end
 ,,,cattr_val,header,cell_val,klass,tooltip,text-align,width,
 <%- OOHelper::Models.new(csv_fname).models do |m| -%>
 <%- # index.html -%>
-<%= m.single %>-index,cattrs,views,<%= m.multiple %>#index
-<%= m.single %>-index,cattrs,location,main
+<%= m.single %>-index,cattrs,locations,<%= m.mu %>#index#main
 <%= m.single %>-index,cattrs,template,index
 <%= m.single %>-index,cattrs,locals,<%= m.multiple %>
-<%= m.single %>-index,cattrs,before_each,<%= m.multiple %>
+<%= m.single %>-index,cattrs,before_each,@<%= m.multiple %>
 <%= m.single %>-index,cattrs,ja_name,<%= m.single %>_ja_name_TODO
 <%= m.single %>-index,cattrs,in_global_menu,TRUE
 <%= m.single %>-index,cattrs,header,xxxHEADER(<%= m.single %>_index)
@@ -188,8 +215,7 @@ end
 <%= m.single %>-index,attrs,<%= a.name %>,,{default},"link_to <%= m.single %>.<%= a.name %>, <%= m.single %>_path(<%= m.single %>.id)"
 <%- end -%>
 <%- # new.html, edit.html用 -%>
-<%= m.single %>-edit,cattrs,views,"<%= m.multiple %>#new, <%= m.multiple %>#edit"
-<%= m.single %>-edit,cattrs,location,main
+<%= m.single %>-edit,cattrs,locations,"<%= m.mu %>#_form#main"
 <%= m.single %>-edit,cattrs,template,show
 <%= m.single %>-edit,cattrs,locals,"<%= m.single %>,f"
 <%= m.single %>-edit,cattrs,ja_name,<%= m.single %>_ja_name_TODO
@@ -201,8 +227,7 @@ end
 <%- end -%>
 <%- # ---  new.html, edit.html内has_oneテーブル用 -%>
 <%- m.has_one_models(models).each do |m_| -%>
-<%= m.single %>-<%= m_.single %>-edit,cattrs,views,"<%= m.multiple %>#new, <%= m.multiple %>#edit"
-<%= m.single %>-<%= m_.single %>-edit,cattrs,location,main
+<%= m.single %>-<%= m_.single %>-edit,cattrs,locations,"<%= m.mu %>#_form#main"
 <%= m.single %>-<%= m_.single %>-edit,cattrs,template,show
 <%= m.single %>-<%= m_.single %>-edit,cattrs,locals,"<%= m_.single %>"
 <%= m.single %>-<%= m_.single %>-edit,cattrs,ja_name,<%= m_.single %>_ja_name_TODO
@@ -214,36 +239,33 @@ end
 <%- end -%>
 <%- end -%>
 <%- # show.html -%>
-<%= m.single %>-show,cattrs,views,<%= m.multiple %>#show
-<%= m.single %>-show,cattrs,location,main
+<%= m.single %>-show,cattrs,locations,<%= m.mu %>#show#main
 <%= m.single %>-show,cattrs,template,show
 <%= m.single %>-show,cattrs,locals,<%= m.single %>
 <%= m.single %>-show,cattrs,ja_name,<%= m.single %>_ja_name_TODO
 <%= m.single %>-show,cattrs,in_global_menu,<%= m.single %>
 <%= m.single %>-show,cattrs,header,xxxHEADER(<%= m.single %>_new
 <%- m.attrs do |a| -%>
-<%= m.single %>-show,attrs,<%= a.name %>,,{default},<%= m.single %>.<%= a.name %>
+<%= m.single %>-show,attrs,<%= a.name %>,,{default},@<%= m.single %>.<%= a.name %>
 <%- end -%>
 <%- # ---  show.html内has_oneテーブル用 -%>
 <%- m.has_one_models(models).each do |m_| -%>
-<%= m.single %>-<%= m_.single %>-show,cattrs,views,"<%= m.multiple %>#show"
-<%= m.single %>-<%= m_.single %>-show,cattrs,location,main
+<%= m.single %>-<%= m_.single %>-show,cattrs,locations,"<%= m.mu %>#show#main"
 <%= m.single %>-<%= m_.single %>-show,cattrs,template,show
 <%= m.single %>-<%= m_.single %>-show,cattrs,locals,"<%= m_.single %>"
 <%= m.single %>-<%= m_.single %>-show,cattrs,ja_name,<%= m_.single %>_ja_name_TODO
 <%= m.single %>-<%= m_.single %>-show,cattrs,in_global_menu,<%= m_.single %>
 <%= m.single %>-<%= m_.single %>-show,cattrs,header,xxxHEADER(<%= m_.single %>_new)
 <%- m_.attrs do |a| -%>
-<%= m.single %>-<%= m_.single %>-show,attrs,<%= a.name %>,,{default},"<%= m_.su %>.<%= a.name %>"
+<%= m.single %>-<%= m_.single %>-show,attrs,<%= a.name %>,,{default},@<%= m_.su %>.<%= a.name %>
 <%- end -%>
 <%- end -%>
 <%- # ---  show.html内has_manyテーブル用 -%>
 <%- m.has_many_models(models).each do |m_| -%>
-<%= m.single %>-<%= m_.mu %>-show,cattrs,views,"<%= m.multiple %>#show"
-<%= m.single %>-<%= m_.mu %>-show,cattrs,location,main
+<%= m.single %>-<%= m_.mu %>-show,cattrs,locations,"<%= m.mu %>#show#main"
 <%= m.single %>-<%= m_.mu %>-show,cattrs,template,index
 <%= m.single %>-<%= m_.mu %>-show,cattrs,locals,"<%= m_.mu %>"
-<%= m.single %>-<%= m_.mu %>-show,cattrs,before_each,"<%= m_.mu %>"
+<%= m.single %>-<%= m_.mu %>-show,cattrs,before_each,"@<%= m_.mu %>"
 <%= m.single %>-<%= m_.mu %>-show,cattrs,ja_name,<%= m_.single %>_ja_name_TODO
 <%= m.single %>-<%= m_.mu %>-show,cattrs,in_global_menu,<%= m_.single %>
 <%= m.single %>-<%= m_.mu %>-show,cattrs,header,xxxHEADER(<%= m_.single %>_new)

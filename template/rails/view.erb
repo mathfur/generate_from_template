@@ -70,64 +70,58 @@ end
 --
 
 <%-
-OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |(cname, view_name), models| -%>
---[app/views/<%= cname %>/<%= view_name %>.html.haml:c]-------------------------------------------
-<%- models.group_by{|m| m.location}.each do |location, models_| -%>
-- content_for :<%= location %> do
+OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |args, location_and_models| -%>
+--[app/views/<%= args.join('/') %>.html.haml:c]-------------------------------------------
+<%- location_and_models.each do |location, models_| -%>
+<%= location ? "- content_for :#{location} do" : '' %>
 <%- models_.each do |t| -%>
-  = render "shared/<%= t.multiple %>", {<%= t.locals.present? ? t.locals.split(/\s*,\s*/).map{|w| ":#{w} => @#{w}"}.join(', ') : '' %>}
-<%- end # models_.each end -%>
-<%- end # group_by location eadh end -%>
---
-
-<%- end # group_by views each end -%>
-
-<%- OOHelper::Models.new(csv_fname).models.each do |t| -%>
---[app/views/shared/_<%= t.multiple %>.html.haml:c]-------------------------------------------
-<%= t.respond_to?(:before_table) ? t.before_table : '' %>
+  <%= t.respond_to?(:before_table) ? t.before_table : '' %>
 <%- case t.template -%>
 <%- when "index" -%>
-%table.<%= t.single %>.table.table-striped.table-bordered.table-condense
-  %tr
-    <%- t.attrs do |a| -%>
-    %th.<%= a.name %>= <%= t.locals.singularize.camelize %>.human_attribute_name("<%= a.name %>")
-    <%- end -%>
-  - <%= t.before_each %>.each do |<%= t.locals.singularize %>|
+  %table.<%= t.single %>.table.table-striped.table-bordered.table-condense
     %tr
       <%- t.attrs do |a| -%>
-      %td.<%= a.name %>{:title => <%= a.tooltip.blank? ? '""' : a.tooltip %>}= <%= a.cell_val.present? ? a.cell_val : "''" %>
+      %th.<%= a.name %>= <%= t.locals.singularize.camelize %>.human_attribute_name("<%= a.name %>")
       <%- end -%>
+    - <%= t.before_each %>.each do |<%= t.locals.singularize %>|
+      %tr
+        <%- t.attrs do |a| -%>
+        %td.<%= a.name %>{:title => <%= a.tooltip.blank? ? '""' : a.tooltip %>}= <%= a.cell_val.present? ? a.cell_val : "''" %>
+        <%- end -%>
 
 <%- when "show" -%>
-%table.<%= t.single %>.table.table-striped.table-bordered.table-condense
-  <%- t.attrs do |a| -%>
-  %tr
-    %th.<%= a.name %>.key= <%= n(a.header == '{default}' ? "t('label.#{a.name}')" : a.header) %>
-    %td.<%= a.name %>.val= <%= n(a.cell_val) %>
-  <%- end -%>
+  %table.<%= t.single %>.table.table-striped.table-bordered.table-condense
+    <%- t.attrs do |a| -%>
+    %tr
+      %th.<%= a.name %>.key= <%= n(a.header == '{default}' ? "t('label.#{a.name}')" : a.header) %>
+      %td.<%= a.name %>.val= <%= n(a.cell_val) %>
+    <%- end -%>
 
 <%- when "menu" -%>
-%table.<%= t.single %>.table.table-striped.table-bordered.table-condense
-  <%- t.attrs do |a| -%>
-  %tr
-    <%- if a.header != '' -%>
-    %th.<%= a.name %>.key <%= a.header %>
-    <%- end -%>
-    %td.<%= a.name %>.val= <%= a.cell_val.present? ? a.cell_val : "''" %>
-  <%- end -%>
-<%- when "rects" -%>
-%svg.<%= t.su %>
-  %tr
-  - <%= t.before_each %>.each do |<%= t.locals.su %>|
+  %table.<%= t.single %>.table.table-striped.table-bordered.table-condense
+    <%- t.attrs do |a| -%>
     %tr
-      <%- t.attrs do |a| -%>
-      %rect{:class => <%= a.name %>, :x1 => <%= a.x1 %>, :y1 => <%= a.y1 %>, :x2 => <%= a.x2 %>, :y2 => <%= a.y2 %>}
+      <%- if a.header != '' -%>
+      %th.<%= a.name %>.key <%= a.header %>
       <%- end -%>
+      %td.<%= a.name %>.val= <%= a.cell_val.present? ? a.cell_val : "''" %>
+    <%- end -%>
+<%- when "rects" -%>
+  %svg.<%= t.su %>
+    %tr
+    - <%= t.before_each %>.each do |<%= t.locals.su %>|
+      %tr
+        <%- t.attrs do |a| -%>
+        %rect{:class => <%= a.name %>, :x1 => <%= a.x1 %>, :y1 => <%= a.y1 %>, :x2 => <%= a.x2 %>, :y2 => <%= a.y2 %>}
+        <%- end -%>
 <%- end # case end -%>
-<%= t.respond_to?(:after_table) ? t.after_table : ''%>
+  <%= t.respond_to?(:after_table) ? t.after_table : ''%>
+
+<%- end #models_ each -%>
+<%- end # location_and_models each end -%>
 --
 
-<%- end -%>
+<%- end # models_group_by_cont_and_view each end -%>
 
 <!-- assets -->
 --[app/assets/stylesheets/application.css.scss:c]-------------------------------------------
