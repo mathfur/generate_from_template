@@ -115,6 +115,14 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |(cname, v
     <%- end -%>
     %td.<%= a.name %>.val= <%= a.cell_val.present? ? a.cell_val : "''" %>
   <%- end -%>
+<%- when "rects" -%>
+%svg.<%= t.su %>
+  %tr
+  - <%= t.before_each %>.each do |<%= t.locals.su %>|
+    %tr
+      <%- t.attrs do |a| -%>
+      %rect{:class => <%= a.name %>, :x1 => <%= a.x1 %>, :y1 => <%= a.y1 %>, :x2 => <%= a.x2 %>, :y2 => <%= a.y2 %>}
+      <%- end -%>
 <%- end # case end -%>
 <%= t.respond_to?(:after_table) ? t.after_table : ''%>
 --

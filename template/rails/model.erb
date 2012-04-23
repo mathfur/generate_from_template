@@ -75,8 +75,16 @@ class <%= m.mc %>Controller < ApplicationController
 
   def show
     @<%= m.su %> = <%= m.sc %>.find(params[:id])
+    <%-# has_many -%>
+    <%- m.has_many_models(models).each do |m_| -%>
+    @<%= m_.mu %> = @<%= m.su %>.<%= m_.mu %>
+    <%- end -%>
     <%- m.has_one_models(models).each do |m_| -%>
     @<%= m_.su %> = @<%= m.su %>.<%= m_.su %> || <%= m_.sc %>.new(:<%= m.su %>_id => @<%= m.su %>.id)
+    <%- end -%>
+    <%-# has_many -%>
+    <%- m.has_many_models(models).each do |m_| -%>
+    @<%= m_.mu %> = @<%= m.su %>.<%= m_.mu %>
     <%- end -%>
 
     respond_to do |format|
@@ -96,8 +104,13 @@ class <%= m.mc %>Controller < ApplicationController
 
   def edit
     @<%= m.su %> = <%= m.sc %>.find(params[:id])
+    <%-# has_one -%>
     <%- m.has_one_models(models).each do |m_| -%>
     @<%= m_.su %> = @<%= m.su %>.<%= m_.su %> || <%= m_.sc %>.new(:<%= m.su %>_id => @<%= m.su %>.id)
+    <%- end -%>
+    <%-# has_many -%>
+    <%- m.has_many_models(models).each do |m_| -%>
+    @<%= m_.mu %> = @<%= m.su %>.<%= m_.mu %>
     <%- end -%>
   end
 
@@ -117,6 +130,7 @@ class <%= m.mc %>Controller < ApplicationController
 
   def update
     @<%= m.su %> = <%= m.sc %>.find(params[:id])
+    <%-# has_one -%>
     <%- m.has_one_models(models).each do |m_| -%>
     @<%= m_.su %> = <%= m_.sc %>.find(params[:<%= m_.su %>][:id])
     <%- end -%>
@@ -221,6 +235,20 @@ end
 <%= m.single %>-<%= m_.single %>-show,cattrs,header,xxxHEADER(<%= m_.single %>_new)
 <%- m_.attrs do |a| -%>
 <%= m.single %>-<%= m_.single %>-show,attrs,<%= a.name %>,,{default},"<%= m_.su %>.<%= a.name %>"
+<%- end -%>
+<%- end -%>
+<%- # ---  show.html内has_manyテーブル用 -%>
+<%- m.has_many_models(models).each do |m_| -%>
+<%= m.single %>-<%= m_.mu %>-show,cattrs,views,"<%= m.multiple %>#show"
+<%= m.single %>-<%= m_.mu %>-show,cattrs,location,main
+<%= m.single %>-<%= m_.mu %>-show,cattrs,template,index
+<%= m.single %>-<%= m_.mu %>-show,cattrs,locals,"<%= m_.mu %>"
+<%= m.single %>-<%= m_.mu %>-show,cattrs,before_each,"<%= m_.mu %>"
+<%= m.single %>-<%= m_.mu %>-show,cattrs,ja_name,<%= m_.single %>_ja_name_TODO
+<%= m.single %>-<%= m_.mu %>-show,cattrs,in_global_menu,<%= m_.single %>
+<%= m.single %>-<%= m_.mu %>-show,cattrs,header,xxxHEADER(<%= m_.single %>_new)
+<%- m_.attrs do |a| -%>
+<%= m.single %>-<%= m_.mu %>-show,attrs,<%= a.name %>,,{default},"link_to <%= m_.su %>.<%= a.name %>, <%= m_.su %>_path(<%= m_.su %>.id)"
 <%- end -%>
 <%- end -%>
 <%- end -%>

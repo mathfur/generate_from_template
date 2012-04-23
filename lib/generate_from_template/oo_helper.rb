@@ -151,7 +151,7 @@ module OOHelper
     def relation_models(relation, all_models)
       raise ArgumentError unless %w{belongs_to has_many has_one}.include?(relation.to_s)
       all_models.select do |m|
-         self.respond_to?(relation.to_s) && (self.send(relation.to_s).try(:split,/\s*,\s*/) || []).include?(m.su)
+         self.respond_to?(relation.to_s) && (self.send(relation.to_s).try(:split,/\s*,\s*/) || []).map{|s| s.singularize}.include?(m.su)
       end
     end
 
