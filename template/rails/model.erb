@@ -208,8 +208,8 @@ end
 <%- end -%>
 
 --[template/view.csv:c]-------------------------------------
-,,,etc,etc,etc,etc,etc,css,css,
-,,,cattr_val,header,cell_val,klass,tooltip,text-align,width,
+,,,etc,etc,etc,etc,etc,etc,css,css,
+,,,cattr_val,header,cell_val,klass,tooltip,order,text-align,width,
 <%- OOHelper::Models.new(csv_fname).models do |m| -%>
 <%- # index.html -%>
 <%= m.single %>-index,cattrs,locations,<%= m.mu %>#index#main

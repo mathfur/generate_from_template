@@ -136,7 +136,8 @@ module OOHelper
           block.call(attr)
         end
       else
-        Hash[*@model_info["attrs"].map{|attr, attr_info| [attr, attr_info["etc"]]}.flatten]
+        #Hash[*@model_info["attrs"].map{|attr, attr_info| [attr, attr_info["etc"]]}.flatten]
+        (@model_info["attrs"] || {}).map{|name, attr_info| Attr.new(name, attr_info)}
       end
     end
 

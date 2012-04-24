@@ -102,7 +102,7 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |args, loc
 
 <%- when "bootstrap-navigation" -%>
   %ul.nav
-    <%- t.attrs do |a| -%>
+    <%- t.attrs.sort_by{|a| a.order}.each do |a| -%>
     %li.active.<%= a.name %>= <%= n(a.cell_val) %>
     <%- end -%>
 
