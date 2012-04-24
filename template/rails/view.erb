@@ -90,6 +90,11 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |args, loc
       %td.<%= a.name %>.val= <%= n(a.cell_val) %>
     <%- end -%>
 
+<%- when "plain" -%>
+  <%- t.attrs do |a| -%>
+  %span.<%= a.name %>.val= <%= n(a.cell_val) %>
+  <%- end -%>
+
 <%- when "menu" -%>
   %table.<%= t.single %>.table.table-striped.table-bordered.table-condense
     <%- t.attrs do |a| -%>
@@ -115,7 +120,7 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |args, loc
         %rect{:class => <%= a.name %>, :x1 => <%= a.x1 %>, :y1 => <%= a.y1 %>, :x2 => <%= a.x2 %>, :y2 => <%= a.y2 %>}
         <%- end -%>
 <%- end # case end -%>
-  <%= t.respond_to?(:after_table) ? t.after_table : ''%>
+  <%= t.respond_to?(:after_table) ? t.after_table : '' %>
 
 <%- end #models_ each -%>
 <%- end # location_and_models each end -%>
