@@ -61,14 +61,6 @@
 ■FOOTER■
 --
 
---[config/routes.rb:c]--------------------------------------------
-アプリケーション名::Application.routes.draw do
-<%- OOHelper::Models.new(csv_fname).controllers.each do |cname| -%>
-  resources :<%= cname %>
-<%- end -%>
-end
---
-
 <%-
 OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |args, location_and_models| -%>
 --[app/views/<%= args.join('/') %>.html.haml:c]-------------------------------------------

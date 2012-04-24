@@ -60,6 +60,14 @@ ja:
       <%- end -%>
 --
 
+--[config/routes.rb:c]--------------------------------------------
+アプリケーション名::Application.routes.draw do
+<%- models.each do |m| -%>
+  resources :<%= m.mu %>
+<%- end -%>
+end
+--
+
 <%- models.each do |m| -%>
 --[app/views/<%= m.mu %>/index.html.haml:c]-------------------------
 
