@@ -274,5 +274,12 @@ end
 <%- end -%>
 <%- end -%>
 <%- end -%>
+<%- # global menu用 -%>
+global_menu,cattrs,locations,shared#_header#
+global_menu,cattrs,template,bootstrap-navigation
+global_menu,cattrs,ja_name,
+<%- models.each do |m| -%>
+global_menu,attrs,<%= m.su %>,,,"link_to t('label.<%= m.su %>'), <%= m.mu %>_path"
+<%- end -%>
 --
 

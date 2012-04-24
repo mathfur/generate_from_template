@@ -73,7 +73,8 @@ end
 OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |args, location_and_models| -%>
 --[app/views/<%= args.join('/') %>.html.haml:c]-------------------------------------------
 <%- location_and_models.each do |location, models_| -%>
-<%= location ? "- content_for :#{location} do" : '' %>
+<%= location.present? ? "- content_for :#{location} do" : '%div' %>
+<%- # %divについて。これが無いとhaml文法エラーと成るためやむ追えずつけた -%>
 <%- models_.each do |t| -%>
   <%= t.respond_to?(:before_table) ? t.before_table : '' %>
 <%- case t.template -%>
@@ -106,6 +107,13 @@ OOHelper::Models.new(csv_fname).models_group_by_cont_and_view.each do |args, loc
       <%- end -%>
       %td.<%= a.name %>.val= <%= a.cell_val.present? ? a.cell_val : "''" %>
     <%- end -%>
+
+<%- when "bootstrap-navigation" -%>
+  %ul.nav
+    <%- t.attrs do |a| -%>
+    %li.active.<%= a.name %>= <%= n(a.cell_val) %>
+    <%- end -%>
+
 <%- when "rects" -%>
   %svg.<%= t.su %>
     %tr
