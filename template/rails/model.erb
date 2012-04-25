@@ -219,9 +219,11 @@ end
 <%= m.single %>-index,cattrs,ja_name,<%= m.single %>_ja_name_TODO
 <%= m.single %>-index,cattrs,in_global_menu,TRUE
 <%= m.single %>-index,cattrs,header,xxxHEADER(<%= m.single %>_index)
+<%= m.single %>-index,cattrs,before_table,
 <%- m.attrs do |a| -%>
 <%= m.single %>-index,attrs,<%= a.name %>,,{default},"link_to <%= m.single %>.<%= a.name %>, <%= m.single %>_path(<%= m.single %>.id)"
 <%- end -%>
+<%= m.single %>-index,cattrs,after_table,
 <%- # new.html, edit.html用 -%>
 <%= m.single %>-edit,cattrs,locations,"<%= m.mu %>#_form#main"
 <%= m.single %>-edit,cattrs,template,show
@@ -230,9 +232,11 @@ end
 <%= m.single %>-edit,cattrs,in_global_menu,<%= m.single %>
 <%= m.single %>-edit,cattrs,header,xxxHEADER(<%= m.single %>_new)
 <%= m.single %>-edit,cattrs,submit,normal
+<%= m.single %>-edit,cattrs,before_table,
 <%- m.attrs do |a| -%>
 <%= m.single %>-edit,attrs,<%= a.name %>,,{default},"text_field :<%= m.su %>, :<%= a.name %>"
 <%- end -%>
+<%= m.single %>-edit,cattrs,after_table,
 <%- # ---  new.html, edit.html内has_oneテーブル用 -%>
 <%- m.has_one_models(models).each do |m_| -%>
 <%= m.single %>-<%= m_.single %>-edit,cattrs,locations,"<%= m.mu %>#_form#main"
@@ -245,6 +249,7 @@ end
 <%- m_.attrs do |a| -%>
 <%= m.single %>-<%= m_.single %>-edit,attrs,<%= a.name %>,,{default},"text_field :<%= m_.su %>, :<%= a.name %>"
 <%- end -%>
+<%= m.single %>-<%= m_.single %>-edit,cattrs,after_table,
 <%- end -%>
 <%- # show.html -%>
 <%= m.single %>-show,cattrs,locations,<%= m.mu %>#show#main
@@ -253,9 +258,11 @@ end
 <%= m.single %>-show,cattrs,ja_name,<%= m.single %>_ja_name_TODO
 <%= m.single %>-show,cattrs,in_global_menu,<%= m.single %>
 <%= m.single %>-show,cattrs,header,xxxHEADER(<%= m.single %>_new
+<%= m.single %>-show,cattrs,before_table,
 <%- m.attrs do |a| -%>
 <%= m.single %>-show,attrs,<%= a.name %>,,{default},@<%= m.single %>.<%= a.name %>
 <%- end -%>
+<%= m.single %>-show,cattrs,after_table,
 <%- # ---  show.html内has_oneテーブル用 -%>
 <%- m.has_one_models(models).each do |m_| -%>
 <%= m.single %>-<%= m_.single %>-show,cattrs,locations,"<%= m.mu %>#show#main"
@@ -264,9 +271,11 @@ end
 <%= m.single %>-<%= m_.single %>-show,cattrs,ja_name,<%= m_.single %>_ja_name_TODO
 <%= m.single %>-<%= m_.single %>-show,cattrs,in_global_menu,<%= m_.single %>
 <%= m.single %>-<%= m_.single %>-show,cattrs,header,xxxHEADER(<%= m_.single %>_new)
+<%= m.single %>-<%= m_.single %>-show,cattrs,before_table
 <%- m_.attrs do |a| -%>
 <%= m.single %>-<%= m_.single %>-show,attrs,<%= a.name %>,,{default},@<%= m_.su %>.<%= a.name %>
 <%- end -%>
+<%= m.single %>-<%= m_.single %>-show,cattrs,after_table
 <%- end -%>
 <%- # ---  show.html内has_manyテーブル用 -%>
 <%- m.has_many_models(models).each do |m_| -%>
@@ -277,17 +286,21 @@ end
 <%= m.single %>-<%= m_.mu %>-index,cattrs,ja_name,<%= m_.single %>_ja_name_TODO
 <%= m.single %>-<%= m_.mu %>-index,cattrs,in_global_menu,<%= m_.single %>
 <%= m.single %>-<%= m_.mu %>-index,cattrs,header,xxxHEADER(<%= m_.single %>_new)
+<%= m.single %>-<%= m_.mu %>-index,cattrs,before_table,
 <%- m_.attrs do |a| -%>
 <%= m.single %>-<%= m_.mu %>-index,attrs,<%= a.name %>,,{default},"link_to <%= m_.su %>.<%= a.name %>, <%= m_.su %>_path(<%= m_.su %>.id)"
 <%- end -%>
+<%= m.single %>-<%= m_.mu %>-index,cattrs,after_table,
 <%- end -%>
 <%- end -%>
 <%- # global menu用 -%>
 global_menu,cattrs,locations,shared#_header#
 global_menu,cattrs,template,bootstrap-navigation
 global_menu,cattrs,ja_name,
+global_menu,cattrs,before_table,
 <%- models.each do |m| -%>
 global_menu,attrs,<%= m.su %>,,,"link_to t('label.<%= m.su %>'), <%= m.mu %>_path"
 <%- end -%>
+global_menu,cattrs,after_table,
 --
 
