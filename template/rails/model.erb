@@ -371,7 +371,7 @@ end
 table '<%= m.mu %>-<%= m_.mu %>-show' do
   location 'app/views/<%= m.mu %>/show.html.haml', 'main'
   template 'normal-list' do
-    <%- m.attrs do |a| -%>
+    <%- m_.attrs do |a| -%>
     row '<%= a.name %>'
     <%- end -%>
   end
