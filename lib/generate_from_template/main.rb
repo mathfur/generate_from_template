@@ -74,6 +74,6 @@ Template.new(template_fname, csv_fname, :verbose => verbose).each_at(output_dir)
   else
     raise "act_stringが不正です"
   end
-  confirm(path) unless skip_confirm
+  return nil if !skip_confirm && confirm(path)
   result
 end

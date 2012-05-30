@@ -21,6 +21,7 @@ class Template
       full_path = "#{base}/#{path}"
       str = File.exist?(full_path) ? File.read(full_path) : ''
       result = block.call(full_path, actor, str, templ)
+      next unless result
       unless Dir.exist?(File.dirname(full_path))
         FileUtils.mkdir_p(File.dirname(full_path))
         STDERR.puts "directory '#{File.dirname(full_path)}' was created." if @verbose
