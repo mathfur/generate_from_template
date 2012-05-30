@@ -304,3 +304,101 @@ global_menu,attrs,<%= m.su %>,,,"link_to t('label.<%= m.su %>'), <%= m.mu %>_pat
 global_menu,cattrs,after_table,
 --
 
+--[template/view.ltpl:c]-------------------------------------
+<%- OOHelper::Models.new(csv_fname).models do |m| -%>
+<%- # index.html -%>
+table '<%= m.single %>-index' do
+  location 'app/views/<%= m.mu %>/index.html.haml', 'main'
+  template 'normal-table' do
+    columns <%= m.attrs.map{|a| ":#{a.name}"}.join(', ') %>, :enum => ['@<%= m.mu %>', '<%= m.su %>']
+  end
+
+  attrs %w{header val klass tooltip order text-align width} do
+  <%- m.attrs do |a| -%>
+    <%= a.name %> "{default}", "r> link_to <%= m.single %>.<%= a.name %>, <%= m.single %>_path(<%= m.single %>.id)"
+  <%- end -%>
+  end
+end
+
+<%- # new.html, edit.html ===================== -%>
+table '<%= m.su %>-new' do
+  location 'app/views/<%= m.mu %>/new.html.haml', 'main'
+  template 'normal-list' do
+    <%- m.attrs do |a| -%>
+    row :<%= a.name %>
+    <%- end -%>
+  end
+
+  attrs %w{header val klass tooltip order text-align width} do
+  <%- m.attrs do |a| -%>
+    <%= a.name %> "{default}", "r> text_field :<%= m.su %>, :<%= a.name %>"
+  <%- end -%>
+  end
+end
+
+<%- m.has_one_models(models).each do |m_| -%>
+table '<%= m.mu %>-<%= m_.mu %>' do
+  location 'app/views/<%= m.mu %>/new.html.haml', 'main'
+  template 'normal-table' do
+    columns <%= m_.attrs.map{|a| ":#{a.name}"}.join(', ') %>, :enum => ['@<%= m_.mu %>', '<%= m_.su %>']
+  end
+
+  attrs %w{header val klass tooltip order text-align width} do
+  <%- m_.attrs do |a| -%>
+    <%= a.name %> '{default}', "r> <%= m_.su %>.<%= a.name %>"
+  <%- end -%>
+  end
+end
+<%- end -%>
+
+<%- # show.html =============================== -%>
+table '<%= m.su %>-show' do
+  location 'app/views/<%= m.mu %>/show.html.haml', 'main'
+  template 'normal-list' do
+    <%- m.attrs do |a| -%>
+    row :<%= a.name %>
+    <%- end -%>
+  end
+
+  attrs %w{header val klass tooltip order text-align width} do
+  <%- m.attrs do |a| -%>
+    <%= a.name %> '{default}', "r> @<%= m.single %>.<%= a.name %>"
+  <%- end -%>
+  end
+end
+
+<%- m.has_one_models(models).each do |m_| -%>
+table '<%= m.mu %>-<%= m_.mu %>-show' do
+  location 'app/views/<%= m.mu %>/show.html.haml', 'main'
+  template 'normal-list' do
+    <%- m.attrs do |a| -%>
+    row '<%= a.name %>'
+    <%- end -%>
+  end
+
+  attrs %w{header val klass tooltip order text-align width} do
+  <%- m_.attrs do |a| -%>
+    <%= a.name %> '{default}', "r> @<%= m_.su %>.<%= a.name %>"
+  <%- end -%>
+  end
+end
+<%- end -%>
+
+<%- m.has_many_models(models).each do |m_| -%>
+table '<%= m.single %>-<%= m_.mu %>-index' do
+  location 'app/views/<%= m.mu %>/show.html.haml', 'main'
+  template 'normal-table' do
+    columns <%= m_.attrs.map{|a| ":#{a.name}"}.join(', ') %>, :enum => ['@<%= m_.mu %>', '<%= m_.su %>']
+  end
+
+  attrs %w{header val klass tooltip order text-align width} do
+  <%- m_.attrs do |a| -%>
+    <%= a.name %> "{default}", "r> link_to <%= m_.su %>.<%= a.name %>, <%= m_.su %>_path(<%= m_.su %>.id)"
+  <%- end -%>
+  end
+end
+<%- end -%>
+
+<%- end -%>
+--
+
